@@ -7,10 +7,10 @@ import { Observable, fromEvent, Subscription } from "rxjs";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"]
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = "fbmStarter";
+  title = "ourLora";
   isConnected = true;
   onlineEvent$: Observable<Event>;
   offlineEvent$: Observable<Event>;
@@ -29,13 +29,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.offlineEvent$ = fromEvent(window, "offline");
 
     this.subscriptions$$.push(
-      this.onlineEvent$.subscribe(e => {
+      this.onlineEvent$.subscribe((e) => {
         this.isConnected = true;
       })
     );
 
     this.subscriptions$$.push(
-      this.offlineEvent$.subscribe(e => {
+      this.offlineEvent$.subscribe((e) => {
         this.isConnected = false;
       })
     );
@@ -53,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
           "New version available.",
           "Load New Version?",
           {
-            duration: 20000
+            duration: 20000,
           }
         );
         newVersionSnackBarRef.onAction().subscribe(() => {
@@ -72,6 +72,6 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * Unsubscribe all subscriptions to avoid memory leak
      */
-    this.subscriptions$$.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions$$.forEach((subscription) => subscription.unsubscribe());
   }
 }

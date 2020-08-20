@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "fbmStarter": {
+    "ourLora": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "aot": true,
-            "outputPath": "dist/fbmStarter",
+            "outputPath": "dist/ourLora",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -79,18 +79,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "fbmStarter:build"
+            "browserTarget": "ourLora:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "fbmStarter:build:production"
+              "browserTarget": "ourLora:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fbmStarter:build"
+            "browserTarget": "ourLora:build"
           }
         },
         "test": {
@@ -118,7 +118,7 @@
         }
       }
     },
-    "fbmStarter-e2e": {
+    "ourLora-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -127,11 +127,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "fbmStarter:serve"
+            "devServerTarget": "ourLora:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "fbmStarter:serve:production"
+              "devServerTarget": "ourLora:serve:production"
             }
           }
         },
@@ -145,7 +145,7 @@
       }
     }
   },
-  "defaultProject": "fbmStarter",
+  "defaultProject": "ourLora",
   "cli": {
     "analytics": "8eb9d55c-f2dc-4dd5-bfe9-db2dc517669e"
   }
