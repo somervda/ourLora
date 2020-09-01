@@ -14,6 +14,10 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/mailbox",
+        "function": "mailbox"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

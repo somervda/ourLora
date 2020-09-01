@@ -7,39 +7,24 @@
   <mat-card class="home-card">
     <mat-card-header class="card-header">
       <div mat-card-avatar class="card-1-image"></div>
-      <mat-card-title>Code</mat-card-title>
-      <mat-card-subtitle>Angular, firebase, PWA code base</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <p>
-        Tested code base
-      </p>
-      <li>Angular 9</li>
-      <li>Firebase (Authentication, FireStore, Hosting, Rule and Functions</li>
-      <li>Basic enterprise Authentication and Authorization)</li>
-      <li>PWA - Progressive Web Application</li>
-      <li>E2E - Cypress E2E test suite</li>
-      <li>Online/Offline - Offline functionality implemented</li>
-      <li>GitHub - https://github.com/somervda/ourLora</li>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="home-card">
-    <mat-card-header class="card-header">
-      <div mat-card-avatar class="card-2-image"></div>
-      <mat-card-title>Design</mat-card-title>
+      <mat-card-title>ourLora</mat-card-title>
       <mat-card-subtitle
-        >Material Design, SCSS and custom theming.</mat-card-subtitle
+        >Lorawan IOT management and reporting system</mat-card-subtitle
       >
     </mat-card-header>
 
     <mat-card-content>
       <p>
-        Material design based theming
+        This project manages a IOT (Internet of Things) boat monitor that
+        monitors the location, temperature, humidity and battery level for the
+        boat. This information is periodically sync'ed with a the ourLora
+        application running on the google cloud and exposed toa user via a
+        Angular frontend. Communication from the boat to the backend uses the
+        Lora wireless system (Allowing long range, low power communication) to
+        the TTN (The Things Network) LoraWan service. The IOT device is based on
+        pycoms' hardware and uses the micro-python programming language for
+        simplicity.
       </p>
-      <li>Material design components and interface</li>
-      <li>SCSS - Custom material design theming implemented</li>
     </mat-card-content>
   </mat-card>
 </div>
