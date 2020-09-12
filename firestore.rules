@@ -44,5 +44,10 @@ service cloud.firestore {
                           !updatingField("isActivated")
                           );
     }
+
+    match /{path=**}/usergroups/{id} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
   }
 }

@@ -1,31 +1,18 @@
 import { NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule } from "@angular/forms";
-
 import { AngularFireModule } from "@angular/fire";
-import { AngularFirePerformanceModule } from "@angular/fire/performance";
-
-import { environment } from "../environments/environment";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { AngularFirePerformanceModule } from "@angular/fire/performance";
 // import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFireStorageModule } from "@angular/fire/storage";
-
-import { AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
-import {
-  MatDividerModule,
-  // MatDatepickerModule,
-  // MatDialogModule,
-  // MatInputModule,
-  // MatSelectModule,
-  // MatGridListModule
-} from "@angular/material/divider";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -36,19 +23,25 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
-
-import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
-
-import { HomeComponent } from "./home/home.component";
-import { NotfoundComponent } from "./notfound/notfound.component";
-import { AboutComponent } from "./about/about.component";
-import { LoginComponent } from "./login/login.component";
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ServiceWorkerModule } from "@angular/service-worker";
-import { UsersComponent } from "./users/users.component";
-import { UserComponent } from "./user/user.component";
+import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
+import { environment } from "../environments/environment";
+import { AboutComponent } from "./about/about.component";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { HomeComponent } from "./home/home.component";
+import { LoginComponent } from "./login/login.component";
 import { NotauthorizedComponent } from "./notauthorized/notauthorized.component";
+import { NotfoundComponent } from "./notfound/notfound.component";
 import { DocPipe } from "./pipes/doc.pipe";
+import { TruncatePipe } from "./pipes/truncate.pipe";
 import { SubheadingComponent } from "./shared/subheading/subheading.component";
+import { UserComponent } from "./user/user.component";
+import { UsergroupComponent } from "./usergroup/usergroup.component";
+import { UsergroupsComponent } from "./usergroups/usergroups.component";
+import { UsersComponent } from "./users/users.component";
 
 @NgModule({
   declarations: [
@@ -62,6 +55,9 @@ import { SubheadingComponent } from "./shared/subheading/subheading.component";
     NotauthorizedComponent,
     DocPipe,
     SubheadingComponent,
+    UsergroupsComponent,
+    TruncatePipe,
+    UsergroupComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,16 +79,18 @@ import { SubheadingComponent } from "./shared/subheading/subheading.component";
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
+    MatFormFieldModule,
     // MatMenuModule,
     // MatDividerModule,
     // MatTabsModule,
-    // MatInputModule,
+    MatInputModule,
     // MatTableModule,
     // MatDialogModule,
     // MatSelectModule,
     // MatDatepickerModule,
     // MatMomentDateModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     NgbCarouselModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirePerformanceModule,

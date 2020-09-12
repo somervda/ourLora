@@ -26,7 +26,7 @@ export class SubheadingComponent implements OnInit {
   }
 
   iconActionClick(value: string) {
-    console.log("iconActionClick:", value);
+    // console.log("iconActionClick:", value);
     this.iconAction.emit(value);
   }
 }

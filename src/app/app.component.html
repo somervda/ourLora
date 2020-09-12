@@ -32,7 +32,17 @@
           routerLink="users"
         >
           <mat-icon>how_to_reg</mat-icon>
-          <span id="mainMenuUsers">&nbsp;User Management</span>
+          <span id="mainMenuUsers">&nbsp;Users</span>
+        </a>
+        <!-- Usergroup Management -->
+        <a
+          mat-list-item
+          *ngIf="(auth.user$ | async)?.isAdmin"
+          mat-list-item
+          routerLink="usergroups"
+        >
+          <mat-icon>group</mat-icon>
+          <span id="mainMenuUsergroups">&nbsp;Usergroups</span>
         </a>
       </span>
       <!-- Logged in options -->
@@ -71,7 +81,7 @@
     </button>
 
     <div class="filler"></div>
-    <div *ngIf="!isConnected" style="margin-right: 20px;">
+    <div *ngIf="!isConnected" style="margin-right: 20px">
       <mat-chip-list>
         <mat-chip
           class="offline-indicator"

@@ -7,30 +7,70 @@ import { LoginComponent } from "./login/login.component";
 import { UsersComponent } from "./users/users.component";
 import { UserComponent } from "./user/user.component";
 import { UserResolver } from "./services/user-resolver";
-import { IsAdminGuard } from "./guards/isAdmin.guard";
-import { IsActivatedGuard } from "./guards/isActivated.guard";
 import { NotauthorizedComponent } from "./notauthorized/notauthorized.component";
+import { UsergroupsComponent } from "./usergroups/usergroups.component";
+import { permissionGuard } from "./guards/permission.guard";
+import { UsergroupComponent } from "./usergroup/usergroup.component";
+import { UsergroupResolver } from "./services/usergroup-resolver";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
   { path: "notAuthorized", component: NotauthorizedComponent },
-  { path: "users", component: UsersComponent, canActivate: [IsAdminGuard] },
+  //  Users
+  {
+    path: "users",
+    component: UsersComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
   {
     path: "user/:uid",
     component: UserComponent,
     resolve: { user: UserResolver },
-    canActivate: [IsActivatedGuard],
+    canActivate: [permissionGuard],
+    data: { permissions: ["isActivated"] },
     runGuardsAndResolvers: "always",
   },
   {
     path: "myprofile/:uid",
     component: UserComponent,
     resolve: { user: UserResolver },
-    canActivate: [IsActivatedGuard],
+    canActivate: [permissionGuard],
+    data: { permissions: ["isActivated"] },
     runGuardsAndResolvers: "always",
   },
+  //  Usersgroups
+  {
+    path: "usergroups",
+    component: UsergroupsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "usergroup/create",
+    component: UsergroupComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "usergroup/delete/:id",
+    component: UsergroupComponent,
+    resolve: { usergroup: UsergroupResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "usergroup/:id",
+    component: UsergroupComponent,
+    resolve: { usergroup: UsergroupResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  //  Other
   { path: "notfound", component: NotfoundComponent },
   { path: "**", component: NotfoundComponent },
 ];
