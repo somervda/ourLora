@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
+import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -42,6 +43,7 @@ import { UserComponent } from "./user/user.component";
 import { UsergroupComponent } from "./usergroup/usergroup.component";
 import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { UsersComponent } from "./users/users.component";
+import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordialog/usergroupselectordialog.component";
 
 @NgModule({
   declarations: [
@@ -58,6 +60,7 @@ import { UsersComponent } from "./users/users.component";
     UsergroupsComponent,
     TruncatePipe,
     UsergroupComponent,
+    UsergroupselectordialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +71,7 @@ import { UsersComponent } from "./users/users.component";
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatDialogModule,
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,

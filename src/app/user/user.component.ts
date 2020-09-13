@@ -1,3 +1,4 @@
+import { MatDialog } from "@angular/material/dialog";
 import { Component, OnInit } from "@angular/core";
 import { AngularFireStorage } from "@angular/fire/storage";
 import { ActivatedRoute } from "@angular/router";
@@ -6,6 +7,7 @@ import { User } from "../models/user.model";
 import { HelperService } from "../services/helper.service";
 import { AuthService } from "./../services/auth.service";
 import { UserService } from "./../services/user.service";
+import { UsergroupselectordialogComponent } from "../dialogs/usergroupselectordialog/usergroupselectordialog.component";
 
 @Component({
   selector: "app-user",
@@ -26,7 +28,8 @@ export class UserComponent implements OnInit {
     private userService: UserService,
     private auth: AuthService,
     private storage: AngularFireStorage,
-    private helper: HelperService
+    private helper: HelperService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -92,5 +95,16 @@ export class UserComponent implements OnInit {
     }
 
     return sDate;
+  }
+
+  openView(resource: DocumentReference) {
+    console.log("openResourceView", resource);
+    const dialogRef = this.dialog.open(UsergroupselectordialogComponent, {
+      width: "95%",
+      maxWidth: "800px",
+      maxHeight: "90%",
+      data: { resource: resource },
+      autoFocus: false,
+    });
   }
 }

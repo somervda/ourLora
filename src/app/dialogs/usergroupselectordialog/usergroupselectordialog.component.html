@@ -1,0 +1,36 @@
+<div class="dialog-heading">Select User Group</div>
+
+<mat-form-field class="full-width">
+  <input
+    matInput
+    (keyup)="onKey($event)"
+    placeholder="Search for User Group"
+    autocomplete="off"
+  />
+</mat-form-field>
+
+<div class="dialog-list">
+  <div
+    class="list-item"
+    *ngFor="let usergroup of usergroups$ | async"
+    [style.backgroundColor]="
+      usergroup?.id == usergroup.id ? 'lightgrey' : 'white'
+    "
+    (click)="onListItemSelected(usergroup.id)"
+  >
+    {{ usergroup.name }}
+  </div>
+</div>
+
+<button
+  mat-button
+  matTooltip="Update Information"
+  (click)="returnItem()"
+  [disabled]="!usergroup"
+>
+  <mat-icon>check</mat-icon>OK
+</button>
+
+<button mat-button matTooltip="Cancel" mat-dialog-close>
+  <mat-icon>close</mat-icon>Cancel
+</button>
