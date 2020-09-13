@@ -1,8 +1,8 @@
 import { MatDialog } from "@angular/material/dialog";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { AngularFireStorage } from "@angular/fire/storage";
 import { ActivatedRoute } from "@angular/router";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { User } from "../models/user.model";
 import { HelperService } from "../services/helper.service";
 import { AuthService } from "./../services/auth.service";
@@ -14,9 +14,11 @@ import { UsergroupselectordialogComponent } from "../dialogs/usergroupselectordi
   templateUrl: "./user.component.html",
   styleUrls: ["./user.component.scss"],
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
   user$: Observable<User>;
   uid: string;
+  user: User;
+  userSubscription$$: Subscription;
   // If only the photo can be updated unless the user has fullAccess
   fullAccess: boolean = false;
 
@@ -48,6 +50,7 @@ export class UserComponent implements OnInit {
     }
 
     this.user$ = this.userService.findUserByUid(this.uid);
+    this.userSubscription$$ = this.user$.subscribe((u) => (this.user = u));
   }
 
   updateField(name: string, value: any) {
@@ -97,14 +100,29 @@ export class UserComponent implements OnInit {
     return sDate;
   }
 
-  openView(resource: DocumentReference) {
-    console.log("openResourceView", resource);
+  updateUserGroups() {
+    // console.log("updateUserGroups");
+    let refSelected = [];
+    if (this.user.usergroups) {
+      refSelected = [...this.user.usergroups];
+    }
+
     const dialogRef = this.dialog.open(UsergroupselectordialogComponent, {
-      width: "95%",
-      maxWidth: "800px",
-      maxHeight: "90%",
-      data: { resource: resource },
+      minWidth: "380px",
+      maxWidth: "500px",
+      width: "80%",
       autoFocus: false,
+      data: { refSelected: refSelected },
     });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // console.log("update usergroups", result);
+        this.userService.dbFieldUpdate(this.uid, "usergroups", result);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.userSubscription$$) this.userSubscription$$.unsubscribe();
   }
 }

@@ -80,6 +80,16 @@
         "
         >None</ng-container
       >
+      <div>
+        <button
+          mat-button-raised
+          *ngIf="fullAccess"
+          (click)="updateUserGroups()"
+          id="btnUpdateUserGroups"
+        >
+          Update Group Membership
+        </button>
+      </div>
     </div>
   </div>
 </div>

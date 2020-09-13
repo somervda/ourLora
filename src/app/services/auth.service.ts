@@ -31,7 +31,7 @@ export class AuthService {
     private router: Router
   ) {
     // Get the auth state, then fetch the Firestore user document or return null
-    console.log("constructor");
+    // console.log("constructor");
     this.user$ = this.afAuth.authState.pipe(
       switchMap((user) => {
         // Logged in
