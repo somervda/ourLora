@@ -1,3 +1,4 @@
+import { DevicetypeResolver } from "./services/devicetype-resolver";
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { HomeComponent } from "./home/home.component";
@@ -12,12 +13,43 @@ import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { permissionGuard } from "./guards/permission.guard";
 import { UsergroupComponent } from "./usergroup/usergroup.component";
 import { UsergroupResolver } from "./services/usergroup-resolver";
+import { DevicetypesComponent } from "./devicetypes/devicetypes.component";
+import { DevicetypeComponent } from "./devicetype/devicetype.component";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
   { path: "notAuthorized", component: NotauthorizedComponent },
+  //  Devicetypes
+  {
+    path: "devicetypes",
+    component: DevicetypesComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "devicetype/create",
+    component: DevicetypeComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "devicetype/delete/:id",
+    component: DevicetypeComponent,
+    resolve: { devicetype: DevicetypeResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "devicetype/:id",
+    component: DevicetypeComponent,
+    resolve: { devicetype: DevicetypeResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
   //  Users
   {
     path: "users",

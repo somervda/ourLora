@@ -49,5 +49,10 @@ service cloud.firestore {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
     }
+
+    match /{path=**}/devicetypes/{id} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
   }
 }

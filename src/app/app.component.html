@@ -42,7 +42,27 @@
           routerLink="usergroups"
         >
           <mat-icon>group</mat-icon>
-          <span id="mainMenuUsergroups">&nbsp;Usergroups</span>
+          <span id="mainMenuUsergroups">&nbsp;User Groups</span>
+        </a>
+        <!-- Devicetypes -->
+        <a
+          mat-list-item
+          *ngIf="(auth.user$ | async)?.isAdmin"
+          mat-list-item
+          routerLink="devicetypes"
+        >
+          <mat-icon>select_all</mat-icon>
+          <span id="mainMenuDevicetypes">&nbsp;Device Types</span>
+        </a>
+        <!-- Devices -->
+        <a
+          mat-list-item
+          *ngIf="(auth.user$ | async)?.isAdmin"
+          mat-list-item
+          routerLink="devices"
+        >
+          <mat-icon>memory</mat-icon>
+          <span id="mainMenuDevices">&nbsp;Devices</span>
         </a>
       </span>
       <!-- Logged in options -->

@@ -44,6 +44,8 @@ import { UsergroupComponent } from "./usergroup/usergroup.component";
 import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { UsersComponent } from "./users/users.component";
 import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordialog/usergroupselectordialog.component";
+import { DevicetypesComponent } from './devicetypes/devicetypes.component';
+import { DevicetypeComponent } from './devicetype/devicetype.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,8 @@ import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordia
     TruncatePipe,
     UsergroupComponent,
     UsergroupselectordialogComponent,
+    DevicetypesComponent,
+    DevicetypeComponent,
   ],
   imports: [
     BrowserModule,

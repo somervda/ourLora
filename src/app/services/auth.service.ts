@@ -63,7 +63,7 @@ export class AuthService {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${authUserInfo.user.uid}`
     );
-    console.log("userRef", `users/${authUserInfo.user.uid}`);
+    // console.log("userRef", `users/${authUserInfo.user.uid}`);
 
     let data = {
       uid: authUserInfo.user.uid,
@@ -84,7 +84,7 @@ export class AuthService {
           "https://ui-avatars.com/api/?name=" + data.displayName;
       }
     }
-    console.log("updateUserData:", data, authUserInfo, userRef);
+    // console.log("updateUserData:", data, authUserInfo, userRef);
     userRef.set(data, { merge: true });
 
     return;
