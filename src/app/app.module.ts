@@ -46,6 +46,8 @@ import { UsersComponent } from "./users/users.component";
 import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordialog/usergroupselectordialog.component";
 import { DevicetypesComponent } from './devicetypes/devicetypes.component';
 import { DevicetypeComponent } from './devicetype/devicetype.component';
+import { DeviceComponent } from './device/device.component';
+import { DevicesComponent } from './devices/devices.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { DevicetypeComponent } from './devicetype/devicetype.component';
     UsergroupselectordialogComponent,
     DevicetypesComponent,
     DevicetypeComponent,
+    DeviceComponent,
+    DevicesComponent,
   ],
   imports: [
     BrowserModule,
