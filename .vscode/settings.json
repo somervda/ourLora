@@ -2,6 +2,7 @@
   "cSpell.words": [
     "Categoryselectordialog",
     "Datepicker",
+    "Devicetype",
     "Firestore",
     "Paginator",
     "Realtime",
@@ -12,6 +13,7 @@
     "authuser",
     "codelyzer",
     "datasource",
+    "devicetypes",
     "devkit",
     "firebaseapp",
     "firebaseui",

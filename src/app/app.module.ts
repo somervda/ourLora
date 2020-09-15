@@ -20,6 +20,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSelectModule } from "@angular/material/select";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -44,10 +45,10 @@ import { UsergroupComponent } from "./usergroup/usergroup.component";
 import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { UsersComponent } from "./users/users.component";
 import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordialog/usergroupselectordialog.component";
-import { DevicetypesComponent } from './devicetypes/devicetypes.component';
-import { DevicetypeComponent } from './devicetype/devicetype.component';
-import { DeviceComponent } from './device/device.component';
-import { DevicesComponent } from './devices/devices.component';
+import { DevicetypesComponent } from "./devicetypes/devicetypes.component";
+import { DevicetypeComponent } from "./devicetype/devicetype.component";
+import { DeviceComponent } from "./device/device.component";
+import { DevicesComponent } from "./devices/devices.component";
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { DevicesComponent } from './devices/devices.component';
     MatTooltipModule,
     MatTableModule,
     MatSnackBarModule,
+    MatSelectModule,
     MatDividerModule,
     MatPaginatorModule,
     MatSortModule,

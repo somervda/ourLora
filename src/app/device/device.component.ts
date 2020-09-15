@@ -1,11 +1,18 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { Crud } from "../models/helper.model";
-import { Device, NetworkSource } from "../models/device.model";
+import {
+  Device,
+  IotDataSource,
+  IotDataSourceInfo,
+} from "../models/device.model";
 import { HelperService } from "../services/helper.service";
 import { DeviceService } from "../services/device.service";
+import { Devicetype } from "../models/devicetype.model";
+import { DocumentReference } from "@angular/fire/firestore";
+import { DevicetypeService } from "../services/devicetype.service";
 
 @Component({
   selector: "app-device",
@@ -17,15 +24,18 @@ export class DeviceComponent implements OnInit, OnDestroy {
   crudAction: Crud;
   // Declare an instance of crud enum to use for checking crudAction value
   Crud = Crud;
+  IotDataSourceInfo = IotDataSourceInfo;
 
   deviceForm: FormGroup;
   deviceSubscription$$: Subscription;
+  devicetypes$: Observable<Devicetype[]>;
 
   constructor(
     private deviceService: DeviceService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private helper: HelperService
+    private helper: HelperService,
+    private devicetypeService: DevicetypeService
   ) {}
 
   ngOnInit() {
@@ -33,6 +43,9 @@ export class DeviceComponent implements OnInit, OnDestroy {
     //   "this.route.snapshot.paramMap.get('id')",
     //   this.route.snapshot.paramMap.get("id")
     // );
+
+    this.devicetypes$ = this.devicetypeService.findAll(100);
+
     this.crudAction = Crud.Update;
     if (this.route.routeConfig.path == "device/delete/:id")
       this.crudAction = Crud.Delete;
@@ -44,9 +57,10 @@ export class DeviceComponent implements OnInit, OnDestroy {
         name: "",
         description: "",
         deviceId: "",
-        networkSource: NetworkSource.TheThingsNetwork,
+        iotDataSource: null,
         deviceType: null,
-        location: null,
+        latitude: null,
+        longitude: null,
         geoHash: null,
       };
     } else {
@@ -69,12 +83,36 @@ export class DeviceComponent implements OnInit, OnDestroy {
           Validators.maxLength(35),
         ],
       ],
+      deviceId: [
+        this.device.deviceId,
+        [Validators.required, Validators.maxLength(80)],
+      ],
       description: [
         this.device.description,
         [
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(500),
+        ],
+      ],
+      deviceType: [this.device.deviceType, [Validators.required]],
+      iotDataSource: [this.device.iotDataSource, [Validators.required]],
+      latitude: [
+        this.device.latitude,
+        [
+          Validators.required,
+          Validators.min(-90),
+          Validators.max(90),
+          Validators.pattern("^[-+]?[0-9]*.?[0-9]+$"),
+        ],
+      ],
+      longitude: [
+        this.device.longitude,
+        [
+          Validators.required,
+          Validators.min(-180),
+          Validators.max(180),
+          Validators.pattern("^[-+]?[0-9]*.?[0-9]+$"),
         ],
       ],
     });
@@ -87,10 +125,30 @@ export class DeviceComponent implements OnInit, OnDestroy {
     }
   }
 
+  // onDevicetypeChange(selectedDevicetype) {
+  //   console.log("onDevicetypeChange:", selectedDevicetype);
+  //   onFieldUpdate()
+  // }
+
+  objectComparisonFunction = function (
+    option: DocumentReference,
+    value: DocumentReference
+  ): boolean {
+    // Needed to compare objects in select drop downs
+    // console.log("compare", option, value);
+    if (option == null && value == null) {
+      return true;
+    }
+    return option?.path == value?.path;
+  };
+
   onCreate() {
     // console.log("create probe", this.probe);
     for (const field in this.deviceForm.controls) {
       this.device[field] = this.deviceForm.get(field).value;
+      if (field == "latitude" || field == "longitude") {
+        this.device[field] = parseFloat(this.deviceForm.get(field).value);
+      }
     }
 
     this.deviceService
@@ -128,9 +186,13 @@ export class DeviceComponent implements OnInit, OnDestroy {
     if (
       this.deviceForm.get(fieldName).valid &&
       this.device.id != "" &&
-      this.crudAction != Crud.Delete
+      this.crudAction == Crud.Update
     ) {
+      // Update firestore
       let newValue = this.deviceForm.get(fieldName).value;
+      if (toType && toType == "number") {
+        newValue = parseFloat(this.deviceForm.get(fieldName).value);
+      }
       this.deviceService.fieldUpdate(this.device.id, fieldName, newValue);
     }
   }

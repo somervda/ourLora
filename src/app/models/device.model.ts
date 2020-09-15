@@ -5,39 +5,48 @@ export interface Device {
   name: string;
   description: string;
   deviceId: string;
-  networkSource: NetworkSource;
+  iotDataSource: IotDataSource;
   deviceType: DocumentReference;
-  location: firebase.firestore.GeoPoint;
+  // location: firebase.firestore.GeoPoint;
+  // Using discrete lat/lng for this, only use geopoint for events when I
+  // don't need to edit them separately
+  latitude: number;
+  longitude: number;
   geoHash: string;
 }
 
-export enum NetworkSource {
+export enum IotDataSource {
   "TheThingsNetwork" = 1,
   "SigFox" = 2,
   "nb-iot" = 3,
   "Internet" = 4,
+  "Hologram" = 5,
 }
 
-export interface NetworkSourceInfoItem {
-  networkSource: NetworkSource;
+export interface IotDataSourceInfoItem {
+  iotDataSource: IotDataSource;
   name: string;
 }
 
-export const NetworkSourceInfo: NetworkSourceInfoItem[] = [
+export const IotDataSourceInfo: IotDataSourceInfoItem[] = [
   {
-    networkSource: NetworkSource.TheThingsNetwork,
+    iotDataSource: IotDataSource.TheThingsNetwork,
     name: "The Things Network",
   },
   {
-    networkSource: NetworkSource.SigFox,
+    iotDataSource: IotDataSource.SigFox,
     name: "SigFox",
   },
   {
-    networkSource: NetworkSource["nb-iot"],
+    iotDataSource: IotDataSource["nb-iot"],
     name: "NB-IOT",
   },
   {
-    networkSource: NetworkSource.Internet,
+    iotDataSource: IotDataSource.Internet,
     name: "Internet",
+  },
+  {
+    iotDataSource: IotDataSource.Hologram,
+    name: "Hologram",
   },
 ];
