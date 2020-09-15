@@ -46,6 +46,8 @@ export class DeviceComponent implements OnInit, OnDestroy {
         deviceId: "",
         networkSource: NetworkSource.TheThingsNetwork,
         deviceType: null,
+        location: null,
+        geoHash: null,
       };
     } else {
       this.device = this.route.snapshot.data["device"];
