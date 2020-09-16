@@ -32,7 +32,7 @@
       <td mat-cell class="deleteRow" *matCellDef="let devicetype">
         <button
           mat-button
-          [routerLink]="['/devicetype/delete/', devicetype.id]"
+          [routerLink]="['/devicetype/', devicetype.id, 'delete']"
           matTooltip="Delete User Group"
         >
           <mat-icon>clear</mat-icon>

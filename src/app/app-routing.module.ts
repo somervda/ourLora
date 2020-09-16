@@ -18,6 +18,8 @@ import { DevicetypesComponent } from "./devicetypes/devicetypes.component";
 import { DevicetypeComponent } from "./devicetype/devicetype.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { DeviceResolver } from "./services/device-resolver";
+import { SensorComponent } from "./sensor/sensor.component";
+import { SensorResolver } from "./services/sensor-resolver";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -38,7 +40,7 @@ const routes: Routes = [
     data: { permissions: ["isAdmin"] },
   },
   {
-    path: "device/delete/:id",
+    path: "device/:id/delete",
     component: DeviceComponent,
     resolve: { device: DeviceResolver },
     canActivate: [permissionGuard],
@@ -67,7 +69,7 @@ const routes: Routes = [
     data: { permissions: ["isAdmin"] },
   },
   {
-    path: "devicetype/delete/:id",
+    path: "devicetype/:id/delete",
     component: DevicetypeComponent,
     resolve: { devicetype: DevicetypeResolver },
     canActivate: [permissionGuard],
@@ -78,6 +80,29 @@ const routes: Routes = [
     path: "devicetype/:id",
     component: DevicetypeComponent,
     resolve: { devicetype: DevicetypeResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  //  Sensor
+  {
+    path: "devicetype/:did/sensor/create",
+    component: SensorComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "devicetype/:did/sensor/:sid/delete",
+    component: SensorComponent,
+    resolve: { sensor: SensorResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "devicetype/:did/sensor/:sid",
+    component: SensorComponent,
+    resolve: { sensor: SensorResolver },
     canActivate: [permissionGuard],
     data: { permissions: ["isAdmin"] },
     runGuardsAndResolvers: "always",
@@ -119,7 +144,7 @@ const routes: Routes = [
     data: { permissions: ["isAdmin"] },
   },
   {
-    path: "usergroup/delete/:id",
+    path: "usergroup/:id/delete",
     component: UsergroupComponent,
     resolve: { usergroup: UsergroupResolver },
     canActivate: [permissionGuard],

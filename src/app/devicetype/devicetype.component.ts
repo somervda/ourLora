@@ -34,7 +34,7 @@ export class DevicetypeComponent implements OnInit, OnDestroy {
     //   this.route.snapshot.paramMap.get("id")
     // );
     this.crudAction = Crud.Update;
-    if (this.route.routeConfig.path == "devicetype/delete/:id")
+    if (this.route.routeConfig.path == "devicetype/:id/delete")
       this.crudAction = Crud.Delete;
     if (this.route.routeConfig.path == "devicetype/create")
       this.crudAction = Crud.Create;

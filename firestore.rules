@@ -55,7 +55,12 @@ service cloud.firestore {
       allow write:  if isAdmin();
     }
 
-        match /{path=**}/devices/{id} {
+    match /{path=**}/devices/{id} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
+
+    match /{path=**}/devicetypes/{did}/sensors/{sid} {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
     }

@@ -34,7 +34,7 @@ export class UsergroupComponent implements OnInit, OnDestroy {
     //   this.route.snapshot.paramMap.get("id")
     // );
     this.crudAction = Crud.Update;
-    if (this.route.routeConfig.path == "usergroup/delete/:id")
+    if (this.route.routeConfig.path == "usergroup/:id/delete")
       this.crudAction = Crud.Delete;
     if (this.route.routeConfig.path == "usergroup/create")
       this.crudAction = Crud.Create;

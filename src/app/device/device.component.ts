@@ -47,7 +47,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
     this.devicetypes$ = this.devicetypeService.findAll(100);
 
     this.crudAction = Crud.Update;
-    if (this.route.routeConfig.path == "device/delete/:id")
+    if (this.route.routeConfig.path == "device/:id/delete")
       this.crudAction = Crud.Delete;
     if (this.route.routeConfig.path == "device/create")
       this.crudAction = Crud.Create;
