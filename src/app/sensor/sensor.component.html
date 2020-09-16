@@ -1,6 +1,7 @@
 <app-subheading
   [prompt]="
-    'Sensor - ' +
+    (devicetype$ | async)?.name +
+    ': Sensor - ' +
     (crudAction == Crud.Create
       ? 'Create'
       : crudAction == Crud.Update
@@ -11,13 +12,14 @@
     {
       icon: 'arrow_back',
       toolTip: 'Return to DeviceType',
-      routerLink: '/devicetype/' + devicetype.id
+      routerLink: '/devicetype/' + did
     }
   ]"
   matIcon="track_changes"
 ></app-subheading>
+
 <div class="page-container">
-  <form class="standard-form" [formGroup]="devicetypeForm">
+  <form class="standard-form" [formGroup]="sensorForm">
     <fieldset [disabled]="crudAction == Crud.Delete">
       <mat-form-field class="full-width">
         <input
@@ -27,17 +29,13 @@
           placeholder="Name"
           required
         />
-        <mat-error *ngIf="devicetypeForm.controls['name'].hasError('required')">
+        <mat-error *ngIf="sensorForm.controls['name'].hasError('required')">
           Name is required.
         </mat-error>
-        <mat-error
-          *ngIf="devicetypeForm.controls['name'].hasError('minlength')"
-        >
+        <mat-error *ngIf="sensorForm.controls['name'].hasError('minlength')">
           Name must be at least 3 characters long.
         </mat-error>
-        <mat-error
-          *ngIf="devicetypeForm.controls['name'].hasError('maxlength')"
-        >
+        <mat-error *ngIf="sensorForm.controls['name'].hasError('maxlength')">
           Name must be no more than 35 characters long.
         </mat-error>
       </mat-form-field>
@@ -54,34 +52,102 @@
           required
         ></textarea>
         <mat-error
-          *ngIf="devicetypeForm.controls['description'].hasError('required')"
+          *ngIf="sensorForm.controls['description'].hasError('required')"
         >
           Description is required.
         </mat-error>
         <mat-error
-          *ngIf="devicetypeForm.controls['description'].hasError('minlength')"
+          *ngIf="sensorForm.controls['description'].hasError('minlength')"
         >
           Description must be at least 10 characters long.
         </mat-error>
         <mat-error
-          *ngIf="devicetypeForm.controls['description'].hasError('maxlength')"
+          *ngIf="sensorForm.controls['description'].hasError('maxlength')"
         >
           Description must be no more than 500 characters long.
         </mat-error>
       </mat-form-field>
+
+      <mat-form-field class="half-width">
+        <mat-label>UOM</mat-label>
+        <mat-select
+          formControlName="uom"
+          (selectionChange)="onFieldUpdate('uom')"
+        >
+          <mat-option *ngFor="let uomItem of UOMInfo" [value]="uomItem.uom">
+            {{ uomItem.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="sensorForm.controls['uom'].hasError('required')">
+          UOM is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-card>
+        <b>Sensor Acquisition Property Mappings</b><br />
+
+        <mat-form-field class="half-width">
+          <input
+            matInput
+            formControlName="acquisitionMapTimestamp"
+            (change)="onFieldUpdate('acquisitionMapTimestamp')"
+            placeholder="Timestamp"
+          />
+          <mat-hint align="start"
+            >IOT payload property that contains the sensor timestamp i.e.
+            metadata.timestamp
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="half-width">
+          <input
+            matInput
+            formControlName="acquisitionMapValue"
+            (change)="onFieldUpdate('acquisitionMapValue')"
+            placeholder="Value"
+          />
+          <mat-hint align="start"
+            >IOT payload property that contains the sensor value i.e.
+            payload.temperature
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="half-width">
+          <input
+            matInput
+            formControlName="acquisitionMapLatitude"
+            (change)="onFieldUpdate('acquisitionMapLatitude')"
+            placeholder="Latitude"
+          />
+          <mat-hint align="start"
+            >IOT payload property that contains the sensor's latitude i.e.
+            payload_fields.lat. Leave blank if latitude not being passed by the
+            sensor.
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="half-width">
+          <input
+            matInput
+            formControlName="acquisitionMapLongitude"
+            (change)="onFieldUpdate('acquisitionMapLongitude')"
+            placeholder="Longitude"
+          />
+          <mat-hint align="start"
+            >IOT payload property that contains the sensor's longitude i.e.
+            payload_fields.lng. Leave blank if longitude not being passed by the
+            sensor.
+          </mat-hint>
+        </mat-form-field>
+      </mat-card>
     </fieldset>
 
-    <app-sensorslist
-      [devicetype]="devicetype"
-      *ngIf="crudAction != Crud.Create"
-      [disabled]="crudAction == Crud.Delete"
-    ></app-sensorslist>
     <br />
     <button
       mat-raised-button
       color="primary"
       *ngIf="crudAction == Crud.Create"
-      [disabled]="!devicetypeForm.valid"
+      [disabled]="!sensorForm.valid"
       (click)="onCreate()"
       id="btnCreate"
     >

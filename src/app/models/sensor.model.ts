@@ -3,18 +3,16 @@ export interface Sensor {
   name: string;
   description: string;
   uom: UOM;
-  acquisitionMap: {
-    timestamp: string;
-    value: string;
-    latitude: string;
-    longitude: string;
-  };
+  acquisitionMapTimestamp: string;
+  acquisitionMapValue: string;
+  acquisitionMapLatitude: string;
+  acquisitionMapLongitude: string;
 }
 
 export enum UOM {
   "centigrade" = 1,
   "volts" = 2,
-  "degrees" = 3,
+  "angle" = 3,
   "bit" = 4,
   "RH" = 5,
   "pascal" = 6,
@@ -26,43 +24,53 @@ export enum UOM {
 export interface UOMInfoItem {
   uom: UOM;
   name: string;
+  nameShort: string;
 }
 
 export const UOMInfo: UOMInfoItem[] = [
   {
     uom: UOM.bit,
-    name: "Bit (On/Off, 0/1)",
+    name: "Bit: Off(0)/On(1)",
+    nameShort: "Bit",
   },
   {
     uom: UOM.centigrade,
-    name: "Centigrade (Temperature)",
+    name: "Centigrade: Temperature",
+    nameShort: "Centigrade",
   },
   {
-    uom: UOM.degrees,
-    name: "Degrees (Angle 0-360)",
+    uom: UOM.angle,
+    name: "Angle: Degrees 0-360",
+    nameShort: "Angle",
   },
   {
     uom: UOM.dimensionless,
-    name: "Dimensionless (Pure scaler)",
+    name: "Dimensionless: Pure Scaler Value",
+    nameShort: "None",
   },
   {
     uom: UOM.meters,
-    name: "Meters (Length)",
+    name: "Meters: Length",
+    nameShort: "Meters",
   },
   {
     uom: UOM.meters_sec,
-    name: "M/s (speed)",
+    name: "M/s: Speed",
+    nameShort: "M/s",
   },
   {
     uom: UOM.pascal,
-    name: "Pascal (Pressure)",
+    name: "Pascal: Pressure",
+    nameShort: "Pascal",
   },
   {
     uom: UOM.RH,
-    name: "RH (Relative Humidity%)",
+    name: "RH: Relative Humidity%",
+    nameShort: "RH%",
   },
   {
     uom: UOM.volts,
     name: "Volts",
+    nameShort: "Volts",
   },
 ];
