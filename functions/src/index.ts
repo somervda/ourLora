@@ -6,7 +6,7 @@ import * as functions from "firebase-functions";
 //
 export const mailbox = functions.https.onRequest((request, response) => {
   // Test with
-  //  curl -d 'name=david&age=12&payload_fields={"lat": 40.1746711730957,"lng": -75.30223083496094}' --user-agent "curl" --user ourLora:password https://ourLora.com/mailbox
+  //  curl -d '{payload_fields:{"lat": 40.1746711730957,"lng": -75.30223083496094, "dev_id": "curlTest01"}}' -H 'Content-Type: application/json' --user-agent "curl" --user ourLora:password https://ourLora.com/mailbox
   if (request.headers.authorization == "Basic b3VyTG9yYTpwYXNzd29yZA==") {
     // Basic authorization = looking for ourLora:password  as the authorization info
     // console.log("request.body.payload_fields:", request.body.payload_fields);
@@ -33,8 +33,13 @@ export const mailbox = functions.https.onRequest((request, response) => {
         }
         case "curl": {
           //statements;
-          console.log("From curl");
-          response.status(200).send("Hello curl!");
+          const deviceId = request.body.payload_fields["dev_id"];
+          console.log(
+            "From curl , deviceId:",
+            deviceId,
+            request.body.payload_fields
+          );
+          response.status(200).send("Hello curl - " + deviceId);
           break;
         }
         default: {

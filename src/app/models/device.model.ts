@@ -21,6 +21,7 @@ export enum IotDataSource {
   "nb-iot" = 3,
   "Internet" = 4,
   "Hologram" = 5,
+  "curl" = 6,
 }
 
 export interface IotDataSourceInfoItem {
@@ -48,5 +49,9 @@ export const IotDataSourceInfo: IotDataSourceInfoItem[] = [
   {
     iotDataSource: IotDataSource.Hologram,
     name: "Hologram",
+  },
+  {
+    iotDataSource: IotDataSource.curl,
+    name: "curl testing",
   },
 ];
