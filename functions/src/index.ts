@@ -6,20 +6,50 @@ import * as functions from "firebase-functions";
 //
 export const mailbox = functions.https.onRequest((request, response) => {
   // Test with
-  //  curl -d 'name=david&age=12&payload_fields={"lat": 40.1746711730957,"lng": -75.30223083496094}' https://us-central1-ourlora-6afb9.cloudfunctions.net/mailbox
-  console.log("request.body.payload_fields:", request.body.payload_fields);
-  console.log("request.body.name:", request.body.name);
-  //   console.log("request.header:", request.header);
-  response.status(200).send("Hello from Firebase!");
+  //  curl -d 'name=david&age=12&payload_fields={"lat": 40.1746711730957,"lng": -75.30223083496094}' --user-agent "curl" --user ourLora:password https://ourLora.com/mailbox
+  if (request.headers.authorization == "Basic b3VyTG9yYTpwYXNzd29yZA==") {
+    // Basic authorization = looking for ourLora:password  as the authorization info
+    // console.log("request.body.payload_fields:", request.body.payload_fields);
+    // console.log("request.headers", request.headers);
+    // console.log("request.body:", request.body);
+    const userAgent = request.headers["user-agent"]?.split("/", 2);
+    if (userAgent) {
+      switch (userAgent[0]) {
+        case "SIGFOX": {
+          const deviceId = request.body.payload_fields.deviceId;
+          // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
+          console.log("From SIGFOX , deviceId:", deviceId);
+          response.status(200).send("Hello SIGFOX ");
+          break;
+        }
+        case "http-ttn": {
+          //statements;
+          console.log("From TTN ");
+          // TTN always provides the device id as part as the body json
+          const deviceId = request.body.dev_id;
+          console.log("From TTN , deviceId:", deviceId);
+          response.status(200).send("Hello TTN!");
+          break;
+        }
+        case "curl": {
+          //statements;
+          console.log("From curl");
+          response.status(200).send("Hello curl!");
+          break;
+        }
+        default: {
+          //statements;
+          console.log("Invalid user agent:", request.headers["user-agent"]);
+          response.status(412).send("Precondition Failed");
+          break;
+        }
+      }
+    } else {
+      console.log("Missing user agent:");
+      response.status(412).send("Precondition Failed");
+    }
+  } else {
+    console.log("401 Unauthorized:", request.headers.authorization);
+    response.status(401).send("Unauthorized");
+  }
 });
-
-// exports.usersDateCreated = functions.firestore
-//   .document("users/{uid}")
-//   .onCreate((snap, context) => {
-//     return snap.ref.set(
-//       {
-//         dateCreated: admin.firestore.FieldValue.serverTimestamp()
-//       },
-//       { merge: true }
-//     );
-//   });
