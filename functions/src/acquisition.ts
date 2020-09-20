@@ -1,3 +1,6 @@
+import { Device } from "./../../src/app/models/device.model";
+import { Devicetype } from "./../../src/app/models/devicetype.model";
+import { Sensor } from "./../../src/app/models/sensor.model";
 import * as functions from "firebase-functions";
 import { db } from "./init";
 
@@ -5,58 +8,7 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
   // To test with curl
   //  curl -d '{"payload_fields" : {"lat": 40.1746711730957,"lng": -75.30223083496094, "dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
 
-  const isValidAuthorization =
-    request.headers.authorization == "Basic b3VyTG9yYTpwYXNzd29yZA==";
-  const isValidContentType =
-    request.headers["content-type"] == "application/json";
-
-  if (isValidAuthorization && isValidContentType) {
-    // Basic authorization = looking for ourLora:password  as the authorization info
-    // Body content tpe must be json
-    const userAgent = request.headers["user-agent"]?.split("/", 2);
-    if (userAgent) {
-      let deviceId = undefined;
-      let iotBackend = undefined;
-      switch (userAgent[0]) {
-        case "SIGFOX": {
-          iotBackend = "SIGFOX";
-          deviceId = request.body.payload_fields.deviceId;
-          // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
-          break;
-        }
-        case "http-ttn": {
-          //statements;
-          iotBackend = "TTN";
-          deviceId = request.body.dev_id;
-          break;
-        }
-        case "curl": {
-          iotBackend = "CURL";
-          //statements;
-          deviceId = request.body.payload_fields["dev_id"];
-          break;
-        }
-        default: {
-          //statements;
-          console.log("Invalid user agent:", request.headers["user-agent"]);
-          response.status(412).send("Precondition Failed");
-          return;
-        }
-      }
-      if (deviceId) {
-        console.log("From " + iotBackend + " deviceId:" + deviceId);
-        await writeSensorEvent(deviceId, request.body).then().catch();
-        response.status(200).send("Hello " + iotBackend + " - " + deviceId);
-      }
-      return;
-    } else {
-      console.log("Missing user agent:");
-      response.status(412).send("Precondition Failed");
-      return;
-    }
-  }
-
-  if (!isValidAuthorization) {
+  if (request.headers.authorization != "Basic b3VyTG9yYTpwYXNzd29yZA==") {
     console.log("401 Unauthorized:", request.headers.authorization);
     response.status(401).send("Unauthorized");
     //  Exit if authentication information is missing or invalid
@@ -65,60 +17,66 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
 
   if (request.headers["content-type"] != "application/json") {
     console.log("Invalid content type: ", request.headers["content-type"]);
-    response.status(412).send("Precondition Failed");
+    response.status(412).send("Precondition Failed, invalid content-type");
     // Exit is invalid content-type
     return;
   }
 
   if (!request.headers["user-agent"]) {
     console.log("Missing user agent:");
-    response.status(412).send("Precondition Failed");
+    response.status(412).send("Precondition Failed, missing user-agent");
     // Exit if missing user-agent
     return;
   }
 
-  // Process the body information based on the source (user-agent) of the request
   const userAgent = request.headers["user-agent"]?.split("/", 2);
   if (userAgent) {
+    let deviceId = undefined;
+    let iotBackend = undefined;
     switch (userAgent[0]) {
       case "SIGFOX": {
-        const deviceId = request.body.payload_fields.deviceId;
+        iotBackend = "SIGFOX";
+        deviceId = request.body.payload_fields.deviceId;
         // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
-        console.log("From SIGFOX , deviceId:", deviceId);
-        writeSensorEvent(deviceId, request.body);
-        response.status(200).send("Hello SIGFOX ");
-        return;
+        break;
       }
       case "http-ttn": {
         //statements;
-        console.log("From TTN ");
-        // TTN always provides the device id as part as the body json
-        const deviceId = request.body.dev_id;
-        console.log("From TTN , deviceId:", deviceId);
-        writeSensorEvent(deviceId, request.body);
-        response.status(200).send("Hello TTN!");
-        return;
+        iotBackend = "TTN";
+        deviceId = request.body.dev_id;
+        break;
       }
       case "curl": {
+        iotBackend = "CURL";
         //statements;
-        const deviceId = request.body.payload_fields["dev_id"];
-        console.log("From curl , deviceId:", deviceId);
-        writeSensorEvent(deviceId, request.body);
-        response.status(200).send("Hello curl - " + deviceId);
-        return;
+        deviceId = request.body.payload_fields["dev_id"];
+        break;
       }
       default: {
         //statements;
         console.log("Invalid user agent:", request.headers["user-agent"]);
-        response.status(412).send("Precondition Failed");
-        // Exit if invalid user-agent
+        response.status(412).send("Precondition Failed, invalid user agent");
         return;
       }
     }
+    if (deviceId) {
+      console.log("From " + iotBackend + " deviceId:" + deviceId);
+      await writeSensorEvent(deviceId, iotBackend, request.body).then().catch();
+      response.status(200).send("Hello " + iotBackend + " - " + deviceId);
+    }
+    return;
+  } else {
+    console.log("Missing user agent:");
+    response.status(412).send("Precondition Failed");
+    return;
   }
 });
 
-async function writeSensorEvent(deviceId: string, requestBody: object) {
+async function writeSensorEvent(
+  deviceId: string,
+  iotBackend: string,
+  requestBody: object
+) {
   // Doing all this stuff synchronously because asynchronous is hurting my brain
   console.log("writeSensorEvent:", deviceId, JSON.stringify(requestBody));
   // Look up device, devicetype and sensors
@@ -136,7 +94,7 @@ async function writeSensorEvent(deviceId: string, requestBody: object) {
         return undefined;
       } else {
         console.log("Device found");
-        return deviceQuery.docs[0].data();
+        return <Device>deviceQuery.docs[0].data();
       }
     })
     .catch((e) => console.log("d error", e));
@@ -147,20 +105,46 @@ async function writeSensorEvent(deviceId: string, requestBody: object) {
 
   // Look up devicetype
   if (device) {
-    const deviceTypeRef = <FirebaseFirestore.DocumentReference>(
-      device.deviceTypeRef
-    );
-    const devicetype = await deviceTypeRef
+    // const deviceTypeRef = <FirebaseFirestore.DocumentReference>(
+    //   device.deviceTypeRef
+    // );
+
+    const devicetype = await device.deviceTypeRef
       .get()
       .then((dt) => {
         if (dt.exists) {
-          return dt.data();
+          return <Devicetype>dt.data();
         }
         return undefined;
       })
       .catch((e) => console.log("dt error", e));
     if (devicetype) {
       console.log("devicetype.name:", devicetype.name);
+      // get sensors
+      const sensorsCollectionRef = <FirebaseFirestore.CollectionReference>(
+        db.collection(device.deviceTypeRef.path + "/sensors")
+      );
+      console.log("sensorsCollectionRef.path:", sensorsCollectionRef.path);
+      const ss = await sensorsCollectionRef.get();
+      const x = ss.docs.map((doc) => {
+        const r = <Sensor>{ id: doc.id, ...doc.data() };
+        return r;
+      });
+
+      console.log("x", JSON.stringify(x));
+      // .then((sensors) => {
+      //   const x = sensors.forEach((sensor) => {
+      //     const g = {
+      //       id: sensor.id,
+      //       ...sensor.data(),
+      //     };
+      //     console.log("g", g.id);
+      //     return g;
+      //   });
+      //   //
+      //   console.log("x", x);
+      // })
+      // .catch((e) => console.log("sensors error", e));
     }
   }
 
