@@ -58,7 +58,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
         description: "",
         deviceId: "",
         iotDataSource: null,
-        deviceType: null,
+        deviceTypeRef: null,
         latitude: null,
         longitude: null,
         geoHash: null,
@@ -95,7 +95,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
           Validators.maxLength(500),
         ],
       ],
-      deviceType: [this.device.deviceType, [Validators.required]],
+      deviceTypeRef: [this.device.deviceTypeRef, [Validators.required]],
       iotDataSource: [this.device.iotDataSource, [Validators.required]],
       latitude: [
         this.device.latitude,

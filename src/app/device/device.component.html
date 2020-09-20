@@ -87,8 +87,8 @@
       <mat-form-field class="half-width">
         <mat-label>Device Type</mat-label>
         <mat-select
-          formControlName="deviceType"
-          (selectionChange)="onFieldUpdate('deviceType')"
+          formControlName="deviceTypeRef"
+          (selectionChange)="onFieldUpdate('deviceTypeRef')"
           [compareWith]="objectComparisonFunction"
         >
           <mat-option
@@ -99,7 +99,7 @@
           </mat-option>
         </mat-select>
         <mat-error
-          *ngIf="deviceForm.controls['deviceType'].hasError('required')"
+          *ngIf="deviceForm.controls['deviceTypeRef'].hasError('required')"
         >
           Device Type is required.
         </mat-error>

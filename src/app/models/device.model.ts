@@ -6,7 +6,7 @@ export interface Device {
   description: string;
   deviceId: string;
   iotDataSource: IotDataSource;
-  deviceType: DocumentReference;
+  deviceTypeRef: DocumentReference;
   // location: firebase.firestore.GeoPoint;
   // Using discrete lat/lng for this, only use geopoint for events when I
   // don't need to edit them separately
