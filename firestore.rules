@@ -64,5 +64,9 @@ service cloud.firestore {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
     }
+
+    match /{path=**}/events/{id} {
+      allow read:  if isAuthenticated();
+    }
   }
 }
