@@ -13,6 +13,9 @@ import * as admin from "firebase-admin";
  * curl -d '{"payload_fields" : {"dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
  */
 export const mailbox = functions.https.onRequest(async (request, response) => {
+  console.log("**** Start **** Headers: ", JSON.stringify(request.headers));
+  console.log("Body: ", JSON.stringify(request.body));
+
   if (request.headers.authorization !== "Basic b3VyTG9yYTpwYXNzd29yZA==") {
     console.log("401 Unauthorized:", request.headers.authorization);
     response.status(401).send("Unauthorized");
@@ -20,7 +23,10 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
     return;
   }
 
-  if (request.headers["content-type"] !== "application/json") {
+  if (
+    request.headers["content-type"] !== "application/json" &&
+    request.headers["content-type"] !== "application/x-www-form-urlencoded"
+  ) {
     console.log("Invalid content type: ", request.headers["content-type"]);
     response.status(412).send("Precondition Failed, invalid content-type");
     // Exit is invalid content-type
@@ -66,10 +72,16 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
     }
     if (deviceId) {
       console.log("From " + iotDataSource + " deviceId:" + deviceId);
-      await prepareAndWriteEvent(deviceId, iotDataSource, request.body)
+      const eventResult = await prepareAndWriteEvent(
+        deviceId,
+        iotDataSource,
+        request.body
+      )
         .then()
         .catch();
-      response.status(200).send("Hello " + iotDataSource + " - " + deviceId);
+      response
+        .status(eventResult)
+        .send("Hello " + iotDataSource + " - " + deviceId);
     }
     return;
   } else {
@@ -120,6 +132,14 @@ async function prepareAndWriteEvent(
 
   if (device) {
     console.log("device:", JSON.stringify(device));
+    if (iotDataSource !== device.iotDataSource) {
+      console.log(
+        "Error unexpected iotDataSource",
+        iotDataSource,
+        device.iotDataSource
+      );
+      return 412;
+    }
   }
 
   // Look up devicetype
@@ -163,7 +183,7 @@ async function prepareAndWriteEvent(
     }
   }
 
-  return;
+  return 200;
 }
 
 /**
@@ -197,9 +217,9 @@ async function writeEvent(
       let longitude = device.longitude;
       if (
         sensor.acquisitionMapLatitude &&
-        sensor.acquisitionMapLatitude.trim() != "" &&
+        sensor.acquisitionMapLatitude.trim() !== "" &&
         sensor.acquisitionMapLongitude &&
-        sensor.acquisitionMapLongitude.trim() != ""
+        sensor.acquisitionMapLongitude.trim() !== ""
       ) {
         const sensorLatitude = getBodyField(
           requestBody,
@@ -215,7 +235,7 @@ async function writeEvent(
         }
       }
 
-      let event: Event = {
+      const event: Event = {
         timestamp: admin.firestore.Timestamp.fromDate(timestamp),
         value: value,
         location: new admin.firestore.GeoPoint(latitude, longitude),
