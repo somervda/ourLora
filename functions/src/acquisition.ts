@@ -23,10 +23,7 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
     return;
   }
 
-  if (
-    request.headers["content-type"] !== "application/json" &&
-    request.headers["content-type"] !== "application/x-www-form-urlencoded"
-  ) {
+  if (request.headers["content-type"] !== "application/json") {
     console.log("Invalid content type: ", request.headers["content-type"]);
     response.status(412).send("Precondition Failed, invalid content-type");
     // Exit is invalid content-type
