@@ -6,10 +6,13 @@ import * as functions from "firebase-functions";
 import { db } from "./init";
 import * as admin from "firebase-admin";
 
+/**
+ * The https function accepting IOT data from the various IOT middleware systems supported
+ * by the ourLora system.
+ * Testing with curl:
+ * curl -d '{"payload_fields" : {"dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
+ */
 export const mailbox = functions.https.onRequest(async (request, response) => {
-  // To test with curl
-  //  curl -d '{"payload_fields" : {"lat": 40.1746711730957,"lng": -75.30223083496094, "dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
-
   if (request.headers.authorization !== "Basic b3VyTG9yYTpwYXNzd29yZA==") {
     console.log("401 Unauthorized:", request.headers.authorization);
     response.status(401).send("Unauthorized");
@@ -76,6 +79,12 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
   }
 });
 
+/**
+ * Looks up the device, devicetype and sensors documents associated with the IOT data
+ * @param deviceId the device object associated with the IOT data
+ * @param iotDataSource the IOT middleware providing the IOT data
+ * @param requestBody The body content for this http request for this function
+ */
 async function prepareAndWriteEvent(
   deviceId: string,
   iotDataSource: IotDataSource,
@@ -85,6 +94,7 @@ async function prepareAndWriteEvent(
   // Assign all events for a particular acquisition operation the same timestamp;
   const timestamp = new Date();
   // console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
+
   // Look up device, devicetype and sensors
   const devicesCollectionRef = <FirebaseFirestore.CollectionReference>(
     db.collection("devices")
@@ -114,10 +124,6 @@ async function prepareAndWriteEvent(
 
   // Look up devicetype
   if (device) {
-    // const deviceTypeRef = <FirebaseFirestore.DocumentReference>(
-    //   device.deviceTypeRef
-    // );
-
     const devicetype = await device.deviceTypeRef
       .get()
       .then((dt) => {
@@ -160,6 +166,15 @@ async function prepareAndWriteEvent(
   return;
 }
 
+/**
+ * Extracts the sensor data from the request.body and writes an event document
+ * @param device the device object associated with the IOT data
+ * @param devicetype the devicetype object associated with the IOT data
+ * @param sensors the sensors object associated with the IOT data devicetype
+ * @param iotDataSource the source of the IOT data
+ * @param requestBody the body of the http request sent to this function from the IOTDataSource
+ * @param timestamp The current date and time (used as a single timestamp applied to all event documents generated from the IOT request)
+ */
 async function writeEvent(
   device: Device,
   devicetype: Devicetype,
@@ -170,34 +185,37 @@ async function writeEvent(
 ) {
   // Match up the sensor definition with the data in the requestBody data, and write an event
   // for each matching sensor
-  // console.log(
-  //   "writeEvent device:",
-  //   JSON.stringify(device),
-  //   " devicetype:",
-  //   JSON.stringify(devicetype),
-  //   " sensors:",
-  //   JSON.stringify(sensors),
-  //   " body:",
-  //   JSON.stringify(requestBody),
-  //   " timestamp:",
-  //   timestamp,
-  //   " devicetype:",
-  //   iotDataSource
-  // );
-
   sensors.forEach(async (sensor) => {
-    // console.log(
-    //   "getBodyField(requestBody,sensor.acquisitionMapValue)",
-    //   getBodyField(requestBody, sensor.acquisitionMapValue)
-    // );
     if (getBodyField(requestBody, sensor.acquisitionMapValue)) {
       // Value property exists for the sensor, we can write an event
       // console.log("Sensor found:", sensor.name);
       const value = getBodyField(requestBody, sensor.acquisitionMapValue);
+
+      // if device has gps sensor and lat/lng is available use those
+      // values rather than the device default location
       let latitude = device.latitude;
       let longitude = device.longitude;
-      let event: Event;
-      event = {
+      if (
+        sensor.acquisitionMapLatitude &&
+        sensor.acquisitionMapLatitude.trim() != "" &&
+        sensor.acquisitionMapLongitude &&
+        sensor.acquisitionMapLongitude.trim() != ""
+      ) {
+        const sensorLatitude = getBodyField(
+          requestBody,
+          sensor.acquisitionMapLatitude
+        );
+        const sensorLongitude = getBodyField(
+          requestBody,
+          sensor.acquisitionMapLongitude
+        );
+        if (sensorLatitude && sensorLongitude) {
+          latitude = sensorLatitude;
+          longitude = sensorLongitude;
+        }
+      }
+
+      let event: Event = {
         timestamp: admin.firestore.Timestamp.fromDate(timestamp),
         value: value,
         location: new admin.firestore.GeoPoint(latitude, longitude),
@@ -218,6 +236,12 @@ async function writeEvent(
   });
 }
 
+/**
+ * Utility to pull the requested property from the body object. Returns undefined if matching property is not found
+ * @param body Request.body object
+ * @param fieldName Name of the property to extract from the request.body object. Uses the "." , in the fieldName, as a property
+ * level indicator in the body object.
+ */
 function getBodyField(body: any, fieldName: string) {
   // console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
   const fieldNameParts = fieldName.split(".", 3);
