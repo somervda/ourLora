@@ -9,7 +9,6 @@ import * as admin from "firebase-admin";
 export const mailbox = functions.https.onRequest(async (request, response) => {
   // To test with curl
   //  curl -d '{"payload_fields" : {"lat": 40.1746711730957,"lng": -75.30223083496094, "dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
-  console.log("Hi 1.01");
 
   if (request.headers.authorization !== "Basic b3VyTG9yYTpwYXNzd29yZA==") {
     console.log("401 Unauthorized:", request.headers.authorization);
@@ -85,7 +84,7 @@ async function prepareAndWriteEvent(
   // Doing all this stuff synchronously because asynchronous is hurting my brain
   // Assign all events for a particular acquisition operation the same timestamp;
   const timestamp = new Date();
-  console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
+  // console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
   // Look up device, devicetype and sensors
   const devicesCollectionRef = <FirebaseFirestore.CollectionReference>(
     db.collection("devices")
@@ -143,7 +142,7 @@ async function prepareAndWriteEvent(
         };
         return sensor;
       });
-      console.log("sensors: ", JSON.stringify(sensors));
+      // console.log("sensors: ", JSON.stringify(sensors));
 
       //  **********************************************
       // We have all the information needed to create an event document
@@ -171,40 +170,32 @@ async function writeEvent(
 ) {
   // Match up the sensor definition with the data in the requestBody data, and write an event
   // for each matching sensor
-  console.log(
-    "writeEvent device:",
-    JSON.stringify(device),
-    " devicetype:",
-    JSON.stringify(devicetype),
-    " sensors:",
-    JSON.stringify(sensors),
-    " body:",
-    JSON.stringify(requestBody),
-    " timestamp:",
-    timestamp,
-    " devicetype:",
-    iotDataSource
-  );
+  // console.log(
+  //   "writeEvent device:",
+  //   JSON.stringify(device),
+  //   " devicetype:",
+  //   JSON.stringify(devicetype),
+  //   " sensors:",
+  //   JSON.stringify(sensors),
+  //   " body:",
+  //   JSON.stringify(requestBody),
+  //   " timestamp:",
+  //   timestamp,
+  //   " devicetype:",
+  //   iotDataSource
+  // );
 
   sensors.forEach(async (sensor) => {
-    console.log(
-      "getBodyField(requestBody,sensor.acquisitionMapValue)",
-      getBodyField(requestBody, sensor.acquisitionMapValue)
-    );
+    // console.log(
+    //   "getBodyField(requestBody,sensor.acquisitionMapValue)",
+    //   getBodyField(requestBody, sensor.acquisitionMapValue)
+    // );
     if (getBodyField(requestBody, sensor.acquisitionMapValue)) {
       // Value property exists for the sensor, we can write an event
-      console.log("Sensor found:", sensor.name);
+      // console.log("Sensor found:", sensor.name);
       const value = getBodyField(requestBody, sensor.acquisitionMapValue);
       let latitude = device.latitude;
       let longitude = device.longitude;
-      // const deviceDocumentRef = <FirebaseFirestore.DocumentReference>(
-      //   db.collection('devices').doc(device.id)
-      // );
-      console.log(
-        "deviceRef",
-        JSON.stringify(db.collection("devices").doc(device.id)),
-        db.collection("devices").doc(device.id)
-      );
       let event: Event;
       event = {
         timestamp: admin.firestore.Timestamp.fromDate(timestamp),
@@ -230,12 +221,6 @@ async function writeEvent(
 function getBodyField(body: any, fieldName: string) {
   // console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
   const fieldNameParts = fieldName.split(".", 3);
-  // console.log(
-  //   "fieldNameParts",
-  //   fieldNameParts,
-  //   " length:",
-  //   fieldNameParts.length
-  // );
   switch (fieldNameParts.length) {
     case 1:
       return body[fieldNameParts[0]];
