@@ -61,7 +61,9 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
     }
     if (deviceId) {
       console.log("From " + iotBackend + " deviceId:" + deviceId);
-      await writeSensorEvent(deviceId, iotBackend, request.body).then().catch();
+      await prepareAndWriteEvent(deviceId, iotBackend, request.body)
+        .then()
+        .catch();
       response.status(200).send("Hello " + iotBackend + " - " + deviceId);
     }
     return;
@@ -72,13 +74,13 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
   }
 });
 
-async function writeSensorEvent(
+async function prepareAndWriteEvent(
   deviceId: string,
   iotBackend: string,
-  requestBody: object
+  requestBody: any
 ) {
   // Doing all this stuff synchronously because asynchronous is hurting my brain
-  console.log("writeSensorEvent:", deviceId, JSON.stringify(requestBody));
+  console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
   // Look up device, devicetype and sensors
   const devicesCollectionRef = <FirebaseFirestore.CollectionReference>(
     db.collection("devices")
@@ -125,28 +127,43 @@ async function writeSensorEvent(
         db.collection(device.deviceTypeRef.path + "/sensors")
       );
       console.log("sensorsCollectionRef.path:", sensorsCollectionRef.path);
-      const ss = await sensorsCollectionRef.get();
-      const x = ss.docs.map((doc) => {
-        const r = <Sensor>{ id: doc.id, ...doc.data() };
-        return r;
+      const sensorSnapShots = await sensorsCollectionRef.get();
+      const sensors = sensorSnapShots.docs.map((sensorSnapShot) => {
+        const sensor = <Sensor>{
+          id: sensorSnapShot.id,
+          ...sensorSnapShot.data(),
+        };
+        return sensor;
       });
 
-      console.log("x", JSON.stringify(x));
-      // .then((sensors) => {
-      //   const x = sensors.forEach((sensor) => {
-      //     const g = {
-      //       id: sensor.id,
-      //       ...sensor.data(),
-      //     };
-      //     console.log("g", g.id);
-      //     return g;
-      //   });
-      //   //
-      //   console.log("x", x);
-      // })
-      // .catch((e) => console.log("sensors error", e));
+      //  **********************************************
+      // We have all the information needed to create an event document
+      writeEvent(device, devicetype, sensors, iotBackend, requestBody);
+      console.log("x", JSON.stringify(sensors));
     }
   }
 
   return;
+}
+
+function writeEvent(
+  device: Device,
+  devicetype: Devicetype,
+  sensors: Sensor[],
+  iotBackend: string,
+  requestBody: any
+) {
+  // Match up the sensor definition with the data in the requestBody data, and write an event
+  // for each matching sensor
+  // const bodyAsString = JSON.stringify(requestBody);
+  // const bodyAsObject = JSON.parse(bodyAsString);
+  const getKeyValue = <U extends keyof T, T extends object>(key: U) => (
+    obj: T
+  ) => obj[key];
+  sensors.forEach((sensor) => {
+    if (requestBody[sensor.acquisitionMapValue]) {
+      // Value property exists for the sensor, we can write an event
+      const value = requestBody[sensor.acquisitionMapValue];
+    }
+  });
 }
