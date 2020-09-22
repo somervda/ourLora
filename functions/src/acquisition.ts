@@ -55,7 +55,7 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
         break;
       }
       case "curl": {
-        iotDataSource = IotDataSource.TheThingsNetwork;
+        iotDataSource = IotDataSource.curl;
         //statements;
         deviceId = request.body.payload_fields["dev_id"];
         break;
