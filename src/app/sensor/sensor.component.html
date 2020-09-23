@@ -84,23 +84,10 @@
       </mat-form-field>
 
       <mat-card>
-        <b>Sensor Acquisition Property Mappings</b><br />
+        <b style="border-bottom: 15px">Sensor Acquisition Property Mappings</b
+        ><br />
         <div class="gridwrapper">
-          <div>
-            <mat-form-field class="full-width">
-              <input
-                matInput
-                formControlName="acquisitionMapValue"
-                (change)="onFieldUpdate('acquisitionMapValue')"
-                placeholder="Value"
-              />
-              <mat-hint align="start"
-                >IOT payload property that contains the sensor value i.e.
-                payload.temperature
-              </mat-hint>
-            </mat-form-field>
-          </div>
-          <div>
+          <div class="gridcell">
             <mat-form-field class="full-width">
               <input
                 matInput
@@ -115,7 +102,7 @@
               </mat-hint>
             </mat-form-field>
           </div>
-          <div>
+          <div class="gridcell">
             <mat-form-field class="full-width">
               <input
                 matInput
@@ -127,6 +114,20 @@
                 >IOT payload property that contains the sensor's longitude i.e.
                 payload_fields.lng. Leave blank if longitude not being passed by
                 the sensor.
+              </mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="gridcell">
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                formControlName="acquisitionMapValue"
+                (change)="onFieldUpdate('acquisitionMapValue')"
+                placeholder="Value"
+              />
+              <mat-hint align="start"
+                >IOT payload property that contains the sensor value i.e.
+                payload.temperature
               </mat-hint>
             </mat-form-field>
           </div>
