@@ -85,61 +85,52 @@
 
       <mat-card>
         <b>Sensor Acquisition Property Mappings</b><br />
-
-        <mat-form-field class="half-width">
-          <input
-            matInput
-            formControlName="acquisitionMapTimestamp"
-            (change)="onFieldUpdate('acquisitionMapTimestamp')"
-            placeholder="Timestamp"
-          />
-          <mat-hint align="start"
-            >IOT payload property that contains the sensor timestamp i.e.
-            metadata.timestamp. Leave blank to use the server timestamp (Usually
-            good enough).
-          </mat-hint>
-        </mat-form-field>
-
-        <mat-form-field class="half-width">
-          <input
-            matInput
-            formControlName="acquisitionMapValue"
-            (change)="onFieldUpdate('acquisitionMapValue')"
-            placeholder="Value"
-          />
-          <mat-hint align="start"
-            >IOT payload property that contains the sensor value i.e.
-            payload.temperature
-          </mat-hint>
-        </mat-form-field>
-
-        <mat-form-field class="half-width">
-          <input
-            matInput
-            formControlName="acquisitionMapLatitude"
-            (change)="onFieldUpdate('acquisitionMapLatitude')"
-            placeholder="Latitude"
-          />
-          <mat-hint align="start"
-            >IOT payload property that contains the sensor's latitude i.e.
-            payload_fields.lat. Leave blank if latitude not being passed by the
-            sensor.
-          </mat-hint>
-        </mat-form-field>
-
-        <mat-form-field class="half-width">
-          <input
-            matInput
-            formControlName="acquisitionMapLongitude"
-            (change)="onFieldUpdate('acquisitionMapLongitude')"
-            placeholder="Longitude"
-          />
-          <mat-hint align="start"
-            >IOT payload property that contains the sensor's longitude i.e.
-            payload_fields.lng. Leave blank if longitude not being passed by the
-            sensor.
-          </mat-hint>
-        </mat-form-field>
+        <div class="gridwrapper">
+          <div>
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                formControlName="acquisitionMapValue"
+                (change)="onFieldUpdate('acquisitionMapValue')"
+                placeholder="Value"
+              />
+              <mat-hint align="start"
+                >IOT payload property that contains the sensor value i.e.
+                payload.temperature
+              </mat-hint>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                formControlName="acquisitionMapLatitude"
+                (change)="onFieldUpdate('acquisitionMapLatitude')"
+                placeholder="Latitude"
+              />
+              <mat-hint align="start"
+                >IOT payload property that contains the sensor's latitude i.e.
+                payload_fields.lat. Leave blank if latitude not being passed by
+                the sensor.
+              </mat-hint>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                formControlName="acquisitionMapLongitude"
+                (change)="onFieldUpdate('acquisitionMapLongitude')"
+                placeholder="Longitude"
+              />
+              <mat-hint align="start"
+                >IOT payload property that contains the sensor's longitude i.e.
+                payload_fields.lng. Leave blank if longitude not being passed by
+                the sensor.
+              </mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
       </mat-card>
     </fieldset>
 

@@ -3,7 +3,6 @@ export interface Sensor {
   name: string;
   description: string;
   uom: UOM;
-  acquisitionMapTimestamp: string;
   acquisitionMapValue: string;
   acquisitionMapLatitude: string;
   acquisitionMapLongitude: string;
