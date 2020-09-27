@@ -60,6 +60,12 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
         deviceId = request.body.payload_fields["dev_id"];
         break;
       }
+      case "LTE": {
+        iotDataSource = IotDataSource.LTE;
+        //statements;
+        deviceId = request.body["device_id"];
+        break;
+      }
       default: {
         //statements;
         console.log("Invalid user agent:", request.headers["user-agent"]);
