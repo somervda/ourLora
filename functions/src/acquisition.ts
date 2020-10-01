@@ -37,24 +37,28 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
     return;
   }
 
-  const userAgent = request.headers["user-agent"]?.split("/", 2);
+  const userAgentSplitSlash = request.headers["user-agent"]?.split("/", 1);
+  let userAgent = undefined;
+  if (userAgentSplitSlash) {
+    userAgent = userAgentSplitSlash[0].split(" ", 1);
+  }
   if (userAgent) {
     let deviceId = undefined;
     let iotDataSource: IotDataSource;
-    switch (userAgent[0]) {
+    switch (userAgent[0].toUpperCase()) {
       case "SIGFOX": {
         iotDataSource = IotDataSource.SigFox;
         deviceId = request.body.payload_fields.deviceId;
         // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
         break;
       }
-      case "http-ttn": {
+      case "HTTP-TTN": {
         //statements;
         iotDataSource = IotDataSource.TheThingsNetwork;
         deviceId = request.body.dev_id;
         break;
       }
-      case "curl": {
+      case "CURL": {
         iotDataSource = IotDataSource.curl;
         //statements;
         deviceId = request.body.payload_fields["dev_id"];
@@ -66,9 +70,20 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
         deviceId = request.body["device_id"];
         break;
       }
+      case "HOLOGRAMCLOUD": {
+        iotDataSource = IotDataSource.Hologram;
+        //statements;
+        deviceId = request.body["deviceId"];
+        break;
+      }
       default: {
         //statements;
-        console.log("Invalid user agent:", request.headers["user-agent"]);
+        console.log(
+          "Invalid user agent:",
+          request.headers["user-agent"],
+          " userAgent[0]:",
+          userAgent[0]
+        );
         response.status(412).send("Precondition Failed, invalid user agent");
         return;
       }
@@ -224,14 +239,28 @@ async function writeEvent(
         sensor.acquisitionMapLongitude &&
         sensor.acquisitionMapLongitude.trim() !== ""
       ) {
-        const sensorLatitude = getBodyField(
-          requestBody,
-          sensor.acquisitionMapLatitude
-        );
-        const sensorLongitude = getBodyField(
-          requestBody,
-          sensor.acquisitionMapLongitude
-        );
+        let sensorLatitude = undefined;
+        // console.log("lat:", requestBody, sensor.acquisitionMapLatitude);
+        // if (
+        //   typeof getBodyField(requestBody, sensor.acquisitionMapLatitude) !=
+        //   "undefined"
+        // ) {
+        //   sensorLatitude = getBodyField(
+        //     requestBody,
+        //     sensor.acquisitionMapLatitude
+        //   );
+        // }
+        let sensorLongitude = undefined;
+        // console.log("lng:", requestBody, sensor.acquisitionMapLongitude);
+        // if (
+        //   typeof getBodyField(requestBody, sensor.acquisitionMapLongitude) !=
+        //   "undefined"
+        // ) {
+        //   sensorLongitude = getBodyField(
+        //     requestBody,
+        //     sensor.acquisitionMapLongitude
+        //   );
+        // }
         if (sensorLatitude && sensorLongitude) {
           latitude = sensorLatitude;
           longitude = sensorLongitude;
@@ -266,16 +295,25 @@ async function writeEvent(
  * level indicator in the body object.
  */
 function getBodyField(body: any, fieldName: string) {
-  // console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
+  console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
   const fieldNameParts = fieldName.split(".", 3);
+  console.log("split fieldNameParts:", fieldNameParts);
   switch (fieldNameParts.length) {
     case 1:
+      console.log("1: fieldNameParts:", fieldNameParts);
       return body[fieldNameParts[0]];
     case 2:
-      return body[fieldNameParts[0]][fieldNameParts[1]];
+      console.log("2: fieldNameParts:", fieldNameParts);
+      if (typeof body[fieldNameParts[0]][fieldNameParts[1]] == "undefined") {
+        console.log("Undefined ");
+        return undefined;
+      } else {
+        return body[fieldNameParts[0]][fieldNameParts[1]];
+      }
     case 3:
+      console.log("3: fieldNameParts:", fieldNameParts);
       return body[fieldNameParts[0]][fieldNameParts[1]][fieldNameParts[2]];
   }
-
+  console.log("missed fieldNameParts:", fieldNameParts);
   return undefined;
 }
