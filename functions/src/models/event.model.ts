@@ -12,4 +12,5 @@ export interface Event {
   applicationRefs: admin.firestore.DocumentReference[];
   value: number;
   iotDataSource: IotDataSource;
+  name: string;
 }

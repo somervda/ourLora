@@ -12,4 +12,5 @@ export interface Event {
   applicationRefs: DocumentReference[];
   value: number;
   iotDataSource: IotDataSource;
+  name: string;
 }

@@ -239,28 +239,16 @@ async function writeEvent(
         sensor.acquisitionMapLongitude &&
         sensor.acquisitionMapLongitude.trim() !== ""
       ) {
-        let sensorLatitude = undefined;
-        // console.log("lat:", requestBody, sensor.acquisitionMapLatitude);
-        // if (
-        //   typeof getBodyField(requestBody, sensor.acquisitionMapLatitude) !=
-        //   "undefined"
-        // ) {
-        //   sensorLatitude = getBodyField(
-        //     requestBody,
-        //     sensor.acquisitionMapLatitude
-        //   );
-        // }
-        let sensorLongitude = undefined;
-        // console.log("lng:", requestBody, sensor.acquisitionMapLongitude);
-        // if (
-        //   typeof getBodyField(requestBody, sensor.acquisitionMapLongitude) !=
-        //   "undefined"
-        // ) {
-        //   sensorLongitude = getBodyField(
-        //     requestBody,
-        //     sensor.acquisitionMapLongitude
-        //   );
-        // }
+        const sensorLatitude = getBodyField(
+          requestBody,
+          sensor.acquisitionMapLatitude
+        );
+
+        const sensorLongitude = getBodyField(
+          requestBody,
+          sensor.acquisitionMapLongitude
+        );
+
         if (sensorLatitude && sensorLongitude) {
           latitude = sensorLatitude;
           longitude = sensorLongitude;
@@ -273,6 +261,7 @@ async function writeEvent(
         location: new admin.firestore.GeoPoint(latitude, longitude),
         geohash: "",
         uom: sensor.uom,
+        name: sensor.name,
         deviceRef: db.collection("devices").doc(device.id),
         sensorRef: db
           .collection("devicetypes")
@@ -295,24 +284,33 @@ async function writeEvent(
  * level indicator in the body object.
  */
 function getBodyField(body: any, fieldName: string) {
-  console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
+  // console.log("getBodyField", fieldName, " body:", JSON.stringify(body));
   const fieldNameParts = fieldName.split(".", 3);
-  console.log("split fieldNameParts:", fieldNameParts);
+  // Check that all sub-levels of properties are present before
+  // checking on the final property (or we get errors)
   switch (fieldNameParts.length) {
     case 1:
-      console.log("1: fieldNameParts:", fieldNameParts);
       return body[fieldNameParts[0]];
     case 2:
-      console.log("2: fieldNameParts:", fieldNameParts);
-      if (typeof body[fieldNameParts[0]][fieldNameParts[1]] == "undefined") {
-        console.log("Undefined ");
+      if (typeof body[fieldNameParts[0]] == "undefined") {
+        console.log("Undefined: ", fieldName);
         return undefined;
       } else {
         return body[fieldNameParts[0]][fieldNameParts[1]];
       }
     case 3:
-      console.log("3: fieldNameParts:", fieldNameParts);
-      return body[fieldNameParts[0]][fieldNameParts[1]][fieldNameParts[2]];
+      if (typeof body[fieldNameParts[0]] == "undefined") {
+        console.log("Undefined: ", fieldName);
+        return undefined;
+      } else {
+        if (typeof body[fieldNameParts[0]][fieldNameParts[1]] == "undefined") {
+          console.log("Undefined: ", fieldName);
+          return undefined;
+        } else {
+          console.log("3: fieldNameParts:", fieldNameParts);
+          return body[fieldNameParts[0]][fieldNameParts[1]][fieldNameParts[2]];
+        }
+      }
   }
   console.log("missed fieldNameParts:", fieldNameParts);
   return undefined;
