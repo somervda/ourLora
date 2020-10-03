@@ -243,12 +243,10 @@ async function writeEvent(
           requestBody,
           sensor.acquisitionMapLatitude
         );
-
         const sensorLongitude = getBodyField(
           requestBody,
           sensor.acquisitionMapLongitude
         );
-
         if (sensorLatitude && sensorLongitude) {
           latitude = sensorLatitude;
           longitude = sensorLongitude;
