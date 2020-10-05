@@ -161,6 +161,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
           "deviceRefs",
           result
         );
+        this.application.deviceRefs = result;
       }
     });
   }
