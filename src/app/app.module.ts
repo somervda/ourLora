@@ -51,6 +51,8 @@ import { DeviceComponent } from "./device/device.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { SensorComponent } from './sensor/sensor.component';
 import { SensorslistComponent } from './shared/sensorslist/sensorslist.component';
+import { ApplicationsComponent } from './applications/applications.component';
+import { ApplicationComponent } from './application/application.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +76,8 @@ import { SensorslistComponent } from './shared/sensorslist/sensorslist.component
     DevicesComponent,
     SensorComponent,
     SensorslistComponent,
+    ApplicationsComponent,
+    ApplicationComponent,
   ],
   imports: [
     BrowserModule,

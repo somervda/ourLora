@@ -20,12 +20,45 @@ import { DevicesComponent } from "./devices/devices.component";
 import { DeviceResolver } from "./services/device-resolver";
 import { SensorComponent } from "./sensor/sensor.component";
 import { SensorResolver } from "./services/sensor-resolver";
+import { ApplicationsComponent } from "./applications/applications.component";
+import { ApplicationComponent } from "./application/application.component";
+import { ApplicationResolver } from "./services/application-resolver";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "about", component: AboutComponent },
   { path: "login", component: LoginComponent },
   { path: "notAuthorized", component: NotauthorizedComponent },
+  //  Applications
+  {
+    path: "applications",
+    component: ApplicationsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "application/create",
+    component: ApplicationComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "application/:id/delete",
+    component: ApplicationComponent,
+    resolve: { application: ApplicationResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "application/:id",
+    component: ApplicationComponent,
+    resolve: { application: ApplicationResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+
   //  Devices
   {
     path: "devices",

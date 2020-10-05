@@ -64,6 +64,16 @@
           <mat-icon>memory</mat-icon>
           <span id="mainMenuDevices">&nbsp;Devices</span>
         </a>
+        <!-- Applications -->
+        <a
+          mat-list-item
+          *ngIf="(auth.user$ | async)?.isAdmin"
+          mat-list-item
+          routerLink="applications"
+        >
+          <mat-icon>category</mat-icon>
+          <span id="mainMenuApplications">&nbsp;Applications</span>
+        </a>
       </span>
       <!-- Logged in options -->
       <span *ngIf="auth.loggedIn$ | async">

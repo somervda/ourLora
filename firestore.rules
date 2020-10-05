@@ -68,5 +68,10 @@ service cloud.firestore {
     match /{path=**}/events/{id} {
       allow read:  if isAuthenticated();
     }
+
+    match /{path=**}/applications/{id} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
   }
 }
