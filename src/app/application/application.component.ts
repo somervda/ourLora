@@ -6,6 +6,8 @@ import { Crud } from "../models/helper.model";
 import { Application } from "../models/application.model";
 import { HelperService } from "../services/helper.service";
 import { ApplicationService } from "../services/application.service";
+import { MatDialog } from "@angular/material/dialog";
+import { DeviceselectordialogComponent } from "../dialogs/deviceselectordialog/deviceselectordialog.component";
 
 @Component({
   selector: "app-application",
@@ -14,6 +16,7 @@ import { ApplicationService } from "../services/application.service";
 })
 export class ApplicationComponent implements OnInit, OnDestroy {
   application: Application;
+
   crudAction: Crud;
   // Declare an instance of crud enum to use for checking crudAction value
   Crud = Crud;
@@ -25,7 +28,8 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     private applicationService: ApplicationService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private helper: HelperService
+    private helper: HelperService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -133,6 +137,32 @@ export class ApplicationComponent implements OnInit, OnDestroy {
         newValue
       );
     }
+  }
+
+  updateDevices() {
+    // console.log("updateUserGroups");
+    let refSelected = [];
+    if (this.application.deviceRefs) {
+      refSelected = [...this.application.deviceRefs];
+    }
+
+    const dialogRef = this.dialog.open(DeviceselectordialogComponent, {
+      minWidth: "380px",
+      maxWidth: "500px",
+      width: "80%",
+      autoFocus: false,
+      data: { refSelected: refSelected },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // console.log("update usergroups", result);
+        this.applicationService.fieldUpdate(
+          this.application.id,
+          "deviceRefs",
+          result
+        );
+      }
+    });
   }
 
   ngOnDestroy() {

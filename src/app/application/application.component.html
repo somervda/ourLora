@@ -73,6 +73,29 @@
       </mat-form-field>
     </fieldset>
 
+    <div class="prompt">Applications</div>
+    <div>
+      <ng-container
+        *ngFor="let deviceRef of application?.deviceRefs; let i = index"
+      >
+        <ng-container *ngIf="i > 0">, </ng-container>
+        <span> {{ (deviceRef | doc | async)?.name }}</span>
+      </ng-container>
+      <ng-container
+        *ngIf="!application?.deviceRefs || application?.deviceRefs.length == 0"
+        >None</ng-container
+      >
+      <div>
+        <button
+          mat-button-raised
+          (click)="updateDevices()"
+          id="btnUpdateDevices"
+        >
+          Update Devices
+        </button>
+      </div>
+    </div>
+
     <button
       mat-raised-button
       color="primary"

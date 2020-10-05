@@ -53,6 +53,7 @@ import { SensorComponent } from './sensor/sensor.component';
 import { SensorslistComponent } from './shared/sensorslist/sensorslist.component';
 import { ApplicationsComponent } from './applications/applications.component';
 import { ApplicationComponent } from './application/application.component';
+import { DeviceselectordialogComponent } from './dialogs/deviceselectordialog/deviceselectordialog.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { ApplicationComponent } from './application/application.component';
     SensorslistComponent,
     ApplicationsComponent,
     ApplicationComponent,
+    DeviceselectordialogComponent,
   ],
   imports: [
     BrowserModule,
