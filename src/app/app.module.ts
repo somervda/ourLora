@@ -54,6 +54,8 @@ import { SensorslistComponent } from './shared/sensorslist/sensorslist.component
 import { ApplicationsComponent } from './applications/applications.component';
 import { ApplicationComponent } from './application/application.component';
 import { DeviceselectordialogComponent } from './dialogs/deviceselectordialog/deviceselectordialog.component';
+import { TriggerComponent } from './trigger/trigger.component';
+import { TriggerslistComponent } from './shared/triggerslist/triggerslist.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +82,8 @@ import { DeviceselectordialogComponent } from './dialogs/deviceselectordialog/de
     ApplicationsComponent,
     ApplicationComponent,
     DeviceselectordialogComponent,
+    TriggerComponent,
+    TriggerslistComponent,
   ],
   imports: [
     BrowserModule,

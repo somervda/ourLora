@@ -75,32 +75,40 @@
 
     <ng-container *ngIf="crudAction != Crud.Create">
       <div class="prompt">Devices</div>
-      <div>
-        <ng-container
-          *ngFor="let deviceRef of application?.deviceRefs; let i = index"
-        >
-          <ng-container *ngIf="i > 0">, </ng-container>
-          <span> {{ (deviceRef | doc | async)?.name }}</span>
-        </ng-container>
-        <ng-container
-          *ngIf="
-            !application?.deviceRefs || application?.deviceRefs.length == 0
-          "
-          >None</ng-container
-        >
+      <mat-card>
         <div>
-          <button
-            mat-button-raised
-            [disabled]="crudAction == Crud.Delete"
-            (click)="updateDevices()"
-            id="btnUpdateDevices"
-            style="margin-top: 10px"
+          <ng-container
+            *ngFor="let deviceRef of application?.deviceRefs; let i = index"
           >
-            Update Devices
-          </button>
+            <ng-container *ngIf="i > 0">, </ng-container>
+            <span> {{ (deviceRef | doc | async)?.name }}</span>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              !application?.deviceRefs || application?.deviceRefs.length == 0
+            "
+            >None</ng-container
+          >
+          <div>
+            <button
+              mat-button-raised
+              [disabled]="crudAction == Crud.Delete"
+              (click)="updateDevices()"
+              id="btnUpdateDevices"
+              style="margin-top: 10px"
+            >
+              Update Devices
+            </button>
+          </div>
         </div>
-      </div>
+      </mat-card>
     </ng-container>
+    <div class="prompt">Triggers</div>
+    <app-triggerslist
+      [application]="application"
+      *ngIf="crudAction != Crud.Create"
+      [disabled]="crudAction == Crud.Delete"
+    ></app-triggerslist>
     <br />
     <button
       mat-raised-button

@@ -1,3 +1,4 @@
+import { TriggerComponent } from "./trigger/trigger.component";
 import { DeviceComponent } from "./device/device.component";
 import { DevicetypeResolver } from "./services/devicetype-resolver";
 import { NgModule } from "@angular/core";
@@ -23,6 +24,7 @@ import { SensorResolver } from "./services/sensor-resolver";
 import { ApplicationsComponent } from "./applications/applications.component";
 import { ApplicationComponent } from "./application/application.component";
 import { ApplicationResolver } from "./services/application-resolver";
+import { TriggerResolver } from "./services/trigger-resolver";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -136,6 +138,29 @@ const routes: Routes = [
     path: "devicetype/:did/sensor/:sid",
     component: SensorComponent,
     resolve: { sensor: SensorResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  //  Trigger
+  {
+    path: "application/:aid/trigger/create",
+    component: TriggerComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "application/:aid/trigger/:tid/delete",
+    component: TriggerComponent,
+    resolve: { trigger: TriggerResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "application/:aid/trigger/:tid",
+    component: TriggerComponent,
+    resolve: { trigger: TriggerResolver },
     canActivate: [permissionGuard],
     data: { permissions: ["isAdmin"] },
     runGuardsAndResolvers: "always",

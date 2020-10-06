@@ -1,11 +1,11 @@
-import { DocumentReference } from "@angular/fire/firestore";
+import * as admin from "firebase-admin";
 
 export interface Trigger {
   id?: string;
   name: string;
   description: string;
   active: boolean;
-  sensorRef: DocumentReference;
+  sensorRef: admin.firestore.DocumentReference;
   triggerRange: {
     min: number;
     max: number;
@@ -13,7 +13,7 @@ export interface Trigger {
   message: string;
   triggerAction: TriggerAction;
   // TargetRef is a user or usergroup
-  targetRef?: DocumentReference;
+  targetRef?: admin.firestore.DocumentReference;
 }
 
 export enum TriggerAction {

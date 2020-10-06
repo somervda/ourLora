@@ -73,5 +73,10 @@ service cloud.firestore {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
     }
+
+        match /{path=**}/applications/{aid}/triggers/{tid} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
   }
 }
