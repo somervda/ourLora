@@ -46,7 +46,7 @@ export class SensorService {
    * @param pageSize The maximum number of Sensors to return
    */
   findAll(did: string, pageSize: number): Observable<Sensor[]> {
-    console.log("Sensor findAll", did, pageSize);
+    // console.log("Sensor findAll", did, pageSize);
     return this.afs
       .collection(
         "/" + this.parentCollectionName + "/" + did + "/" + this.collectionName,

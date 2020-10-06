@@ -110,6 +110,7 @@ export class TriggerComponent implements OnInit, OnDestroy {
       ],
       triggerAction: [this.trigger.triggerAction, [Validators.required]],
       active: [this.trigger.active],
+      sensorRef: [this.trigger.sensorRef, [Validators.required]],
     });
 
     // Mark all fields as touched to trigger validation on initial entry to the fields
@@ -157,6 +158,18 @@ export class TriggerComponent implements OnInit, OnDestroy {
       });
   }
 
+  objectComparisonFunction = function (
+    option: DocumentReference,
+    value: DocumentReference
+  ): boolean {
+    // Needed to compare objects in select drop downs
+    // console.log("compare", option, value);
+    if (option == null && value == null) {
+      return true;
+    }
+    return option?.path == value?.path;
+  };
+
   onFieldUpdate(fieldName: string, toType?: string) {
     if (
       this.triggerForm.get(fieldName).valid &&
@@ -188,33 +201,23 @@ export class TriggerComponent implements OnInit, OnDestroy {
    */
   private getSensors() {
     // Get all the unique sensorRefs for the application
-    // console.log("getSensors - aid:", this.aid);
     this.application$$ = this.application$.subscribe((application) => {
       const deviceRefs = application.deviceRefs;
       deviceRefs.forEach((deviceRef) => {
-        // console.log("deviceRef:", deviceRef);
         deviceRef
           .get()
           .then((device) => {
-            // console.log("device:", device.data());
             // get devicetype
             if (device.exists) {
               const devicetypeRef = <DocumentReference>(
                 device.data()?.deviceTypeRef
               );
-              // devicetypeRef
-              //   .get()
-              //   .then((devicetype) => {
-              //     // Resolved devicetype
-              //     console.log("devicetype:", devicetype.data());
-              //   })
-              //   .catch();
-              // Get sensors
+              // Get all sensors for devicetypeRef(s)
               this.sensors$$ = this.sensorService
                 .findAll(devicetypeRef.id, 100)
                 .subscribe((sensors) => {
-                  // console.log("s:", s);
                   sensors.forEach((sensor) => {
+                    // Add sensor to sensor array if it isn't a duplicate
                     if (
                       !this.sensors.find(
                         (sensorItem) => sensorItem.id == sensor.id
@@ -229,6 +232,10 @@ export class TriggerComponent implements OnInit, OnDestroy {
           .catch();
       });
     });
+  }
+
+  getSensorRef(id: string) {
+    return this.helper.docRef("applications/" + this.aid + "/sensors/" + id);
   }
 
   ngOnDestroy() {

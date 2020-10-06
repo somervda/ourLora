@@ -46,7 +46,7 @@ export class TriggerService {
    * @param pageSize The maximum number of Triggers to return
    */
   findAll(aid: string, pageSize: number): Observable<Trigger[]> {
-    console.log("Trigger findAll", aid, pageSize);
+    // console.log("Trigger findAll", aid, pageSize);
     return this.afs
       .collection(
         "/" + this.parentCollectionName + "/" + aid + "/" + this.collectionName,
