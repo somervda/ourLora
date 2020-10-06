@@ -30,14 +30,14 @@ export class TriggerComponent implements OnInit, OnDestroy {
   Crud = Crud;
 
   triggerForm: FormGroup;
-  triggerSubscription$$: Subscription;
+  trigger$$: Subscription;
   TriggerActionInfo = TriggerActionInfo;
 
   // sensors processing
   application$$: Subscription;
-  devices$: Observable<Device[]>;
-  devices$$: Subscription;
-  devicetypes$: Observable<Devicetype[]>;
+  // devices$: Observable<Device[]>;
+  // devices$$: Subscription;
+  // devicetypes$: Observable<Devicetype[]>;
   sensors$$: Subscription;
   sensors: Sensor[];
 
@@ -80,7 +80,7 @@ export class TriggerComponent implements OnInit, OnDestroy {
       };
     } else {
       this.trigger = this.route.snapshot.data["trigger"];
-      this.triggerSubscription$$ = this.triggerService
+      this.trigger$$ = this.triggerService
         .findById(this.aid, this.trigger.id)
         .subscribe((trigger) => {
           this.trigger = trigger;
@@ -179,32 +179,50 @@ export class TriggerComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSensors() {
+  /**
+   * Load the sensors array with all the sensors that could be used by the trigger
+   * This runs through the relationships from the triggers parent application->
+   * to the devices for the application -> to the devicetypee of those devices ->
+   * and then getting the sensors for those devicetypes (only add unique sensors)
+   *
+   */
+  private getSensors() {
     // Get all the unique sensorRefs for the application
-    console.log("getSensors - aid:", this.aid);
-    this.application$$ = this.application$.subscribe((a) => {
-      let deviceRefs = a.deviceRefs;
-      deviceRefs.forEach((dr) => {
-        console.log("deviceRefs:", dr);
-        dr.get()
-          .then((d) => {
-            console.log("device:", d.data());
+    // console.log("getSensors - aid:", this.aid);
+    this.application$$ = this.application$.subscribe((application) => {
+      const deviceRefs = application.deviceRefs;
+      deviceRefs.forEach((deviceRef) => {
+        // console.log("deviceRef:", deviceRef);
+        deviceRef
+          .get()
+          .then((device) => {
+            // console.log("device:", device.data());
             // get devicetype
-            if (d.exists) {
-              const devicetypeRef = <DocumentReference>d.data()?.deviceTypeRef;
-              devicetypeRef
-                .get()
-                .then((dt) => {
-                  // Resolved devicetype
-                  console.log("devicetype:", dt.data());
-                })
-                .catch();
+            if (device.exists) {
+              const devicetypeRef = <DocumentReference>(
+                device.data()?.deviceTypeRef
+              );
+              // devicetypeRef
+              //   .get()
+              //   .then((devicetype) => {
+              //     // Resolved devicetype
+              //     console.log("devicetype:", devicetype.data());
+              //   })
+              //   .catch();
               // Get sensors
               this.sensors$$ = this.sensorService
                 .findAll(devicetypeRef.id, 100)
-                .subscribe((s) => {
-                  console.log("s:", s);
-                  s.forEach((sensor) => this.sensors.push(sensor));
+                .subscribe((sensors) => {
+                  // console.log("s:", s);
+                  sensors.forEach((sensor) => {
+                    if (
+                      !this.sensors.find(
+                        (sensorItem) => sensorItem.id == sensor.id
+                      )
+                    ) {
+                      this.sensors.push(sensor);
+                    }
+                  });
                 });
             }
           })
@@ -214,6 +232,8 @@ export class TriggerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.triggerSubscription$$) this.triggerSubscription$$.unsubscribe();
+    if (this.trigger$$) this.trigger$$.unsubscribe();
+    if (this.application$$) this.application$$.unsubscribe();
+    if (this.sensors$$) this.sensors$$.unsubscribe();
   }
 }
