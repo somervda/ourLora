@@ -67,6 +67,33 @@
           Description must be no more than 500 characters long.
         </mat-error>
       </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <textarea
+          matInput
+          formControlName="message"
+          (change)="onFieldUpdate('message')"
+          matAutosizeMinRows="3"
+          matAutosizeMaxRows="10"
+          matTextareaAutosize
+          placeholder="Message"
+          required
+        ></textarea>
+        <mat-error *ngIf="triggerForm.controls['message'].hasError('required')">
+          Message is required.
+        </mat-error>
+        <mat-error
+          *ngIf="triggerForm.controls['message'].hasError('minlength')"
+        >
+          Message must be at least 10 characters long.
+        </mat-error>
+        <mat-error
+          *ngIf="triggerForm.controls['message'].hasError('maxlength')"
+        >
+          Message must be no more than 500 characters long.
+        </mat-error>
+      </mat-form-field>
+
       <div class="gridwrapper">
         <div>
           <mat-form-field class="full-width">
@@ -109,6 +136,60 @@
               *ngIf="triggerForm.controls['triggerAction'].hasError('required')"
             >
               Action is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <mat-form-field class="full-width">
+            <mat-label>Minimum value for trigger</mat-label>
+            <input
+              matInput
+              formControlName="triggerRangeMin"
+              (change)="onFieldUpdate('triggerRangeMin')"
+              placeholder="0.0"
+              required
+            />
+            <mat-error
+              *ngIf="
+                triggerForm.controls['triggerRangeMin'].hasError('required')
+              "
+            >
+              Minimum value is required.
+            </mat-error>
+            <mat-error
+              *ngIf="
+                triggerForm.controls['triggerRangeMin'].hasError('pattern')
+              "
+            >
+              Minimum value must be numeric.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <mat-form-field class="full-width">
+            <mat-label>Maximum value for trigger</mat-label>
+            <input
+              matInput
+              formControlName="triggerRangeMax"
+              (change)="onFieldUpdate('triggerRangeMax')"
+              placeholder="0.0"
+              required
+            />
+            <mat-error
+              *ngIf="
+                triggerForm.controls['triggerRangeMax'].hasError('required')
+              "
+            >
+              Maximum value is required.
+            </mat-error>
+            <mat-error
+              *ngIf="
+                triggerForm.controls['triggerRangeMax'].hasError('pattern')
+              "
+            >
+              Maximum value must be numeric.
             </mat-error>
           </mat-form-field>
         </div>

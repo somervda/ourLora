@@ -12,10 +12,8 @@ export interface Trigger {
   description: string;
   active: boolean;
   sensorRef: DocumentReference;
-  triggerRange: {
-    min: number;
-    max: number;
-  };
+  triggerRangeMin: number;
+  triggerRangeMax: number;
   message: string;
   triggerAction: TriggerAction;
   // TargetRef is a user or usergroup

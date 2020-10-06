@@ -75,7 +75,8 @@ export class TriggerComponent implements OnInit, OnDestroy {
         sensorRef: null,
         triggerAction: null,
         targetRef: null,
-        triggerRange: null,
+        triggerRangeMin: null,
+        triggerRangeMax: null,
         message: null,
       };
     } else {
@@ -108,9 +109,25 @@ export class TriggerComponent implements OnInit, OnDestroy {
           Validators.maxLength(500),
         ],
       ],
+      message: [
+        this.trigger.message,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(500),
+        ],
+      ],
       triggerAction: [this.trigger.triggerAction, [Validators.required]],
       active: [this.trigger.active],
       sensorRef: [this.trigger.sensorRef, [Validators.required]],
+      triggerRangeMin: [
+        this.trigger.triggerRangeMin,
+        [Validators.required, Validators.pattern("^[-+]?[0-9]*.?[0-9]+$")],
+      ],
+      triggerRangeMax: [
+        this.trigger.triggerRangeMax,
+        [Validators.required, Validators.pattern("^[-+]?[0-9]*.?[0-9]+$")],
+      ],
     });
 
     // Mark all fields as touched to trigger validation on initial entry to the fields
