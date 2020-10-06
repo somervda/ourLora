@@ -3,6 +3,18 @@ table {
   min-width: 340px;
 }
 
+.mat-column-name {
+  padding-right: 5px;
+}
+
+.mat-column-description {
+  padding-right: 5px;
+}
+
+.mat-column-triggerAction {
+  padding-right: 5px;
+}
+
 .mat-column-id {
   text-align: right;
   justify-content: flex-end;

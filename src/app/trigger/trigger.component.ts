@@ -1,12 +1,19 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
+import { DocumentReference } from "@google-cloud/firestore";
+import { Device } from "functions/src/models/device.model";
+import { Devicetype } from "functions/src/models/devicetype.model";
+import { Sensor } from "functions/src/models/sensor.model";
 import { Observable, Subscription } from "rxjs";
 import { Application } from "../models/application.model";
 import { Crud } from "../models/helper.model";
-import { Trigger } from "../models/trigger.model";
+import { Trigger, TriggerActionInfo } from "../models/trigger.model";
 import { ApplicationService } from "../services/application.service";
+import { DeviceService } from "../services/device.service";
+import { DevicetypeService } from "../services/devicetype.service";
 import { HelperService } from "../services/helper.service";
+import { SensorService } from "../services/sensor.service";
 import { TriggerService } from "../services/trigger.service";
 
 @Component({
@@ -24,13 +31,25 @@ export class TriggerComponent implements OnInit, OnDestroy {
 
   triggerForm: FormGroup;
   triggerSubscription$$: Subscription;
+  TriggerActionInfo = TriggerActionInfo;
+
+  // sensors processing
+  application$$: Subscription;
+  devices$: Observable<Device[]>;
+  devices$$: Subscription;
+  devicetypes$: Observable<Devicetype[]>;
+  sensors$$: Subscription;
+  sensors: Sensor[];
 
   constructor(
     private triggerService: TriggerService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private helper: HelperService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private deviceService: DeviceService,
+    private devicetypeService: DevicetypeService,
+    private sensorService: SensorService
   ) {}
 
   ngOnInit() {
@@ -39,6 +58,7 @@ export class TriggerComponent implements OnInit, OnDestroy {
       this.route.snapshot.paramMap.get("aid"),
       this.route.snapshot.paramMap.get("tid")
     );
+    this.sensors = [];
     this.aid = this.route.snapshot.paramMap.get("aid");
     this.application$ = this.applicationService.findById(this.aid);
     this.crudAction = Crud.Update;
@@ -68,6 +88,8 @@ export class TriggerComponent implements OnInit, OnDestroy {
         });
     }
 
+    this.getSensors();
+
     // Create form group and initialize with probe values
     this.triggerForm = this.fb.group({
       name: [
@@ -86,6 +108,8 @@ export class TriggerComponent implements OnInit, OnDestroy {
           Validators.maxLength(500),
         ],
       ],
+      triggerAction: [this.trigger.triggerAction, [Validators.required]],
+      active: [this.trigger.active],
     });
 
     // Mark all fields as touched to trigger validation on initial entry to the fields
@@ -141,6 +165,11 @@ export class TriggerComponent implements OnInit, OnDestroy {
       this.crudAction != Crud.Delete
     ) {
       let newValue = this.triggerForm.get(fieldName).value;
+      if (toType && toType == "Toggle") {
+        newValue = !newValue;
+      }
+
+      console.log("update:", fieldName, newValue);
       this.triggerService.fieldUpdate(
         this.aid,
         this.trigger.id,
@@ -148,6 +177,40 @@ export class TriggerComponent implements OnInit, OnDestroy {
         newValue
       );
     }
+  }
+
+  getSensors() {
+    // Get all the unique sensorRefs for the application
+    console.log("getSensors - aid:", this.aid);
+    this.application$$ = this.application$.subscribe((a) => {
+      let deviceRefs = a.deviceRefs;
+      deviceRefs.forEach((dr) => {
+        console.log("deviceRefs:", dr);
+        dr.get()
+          .then((d) => {
+            console.log("device:", d.data());
+            // get devicetype
+            if (d.exists) {
+              const devicetypeRef = <DocumentReference>d.data()?.deviceTypeRef;
+              devicetypeRef
+                .get()
+                .then((dt) => {
+                  // Resolved devicetype
+                  console.log("devicetype:", dt.data());
+                })
+                .catch();
+              // Get sensors
+              this.sensors$$ = this.sensorService
+                .findAll(devicetypeRef.id, 100)
+                .subscribe((s) => {
+                  console.log("s:", s);
+                  s.forEach((sensor) => this.sensors.push(sensor));
+                });
+            }
+          })
+          .catch();
+      });
+    });
   }
 
   ngOnDestroy() {

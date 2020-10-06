@@ -16,8 +16,35 @@ export interface Trigger {
   targetRef?: admin.firestore.DocumentReference;
 }
 
+/**
+ * Action to perform if a trigger is fired
+ */
 export enum TriggerAction {
   "Notification" = 1,
   "eMail" = 2,
   "Log" = 3,
 }
+
+export interface TriggerActionInfoItem {
+  value: number;
+  name: string;
+  nameShort: string;
+}
+
+export const TriggerActionInfo: TriggerActionInfoItem[] = [
+  {
+    value: 1,
+    name: "User Notification",
+    nameShort: "Notification",
+  },
+  {
+    value: 2,
+    name: "User EMail",
+    nameShort: "email",
+  },
+  {
+    value: 3,
+    name: "Log Entry",
+    nameShort: "Log",
+  },
+];

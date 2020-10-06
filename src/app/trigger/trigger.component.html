@@ -67,6 +67,37 @@
           Description must be no more than 500 characters long.
         </mat-error>
       </mat-form-field>
+      <div class="gridwrapper">
+        <div>
+          <mat-form-field class="full-width">
+            <mat-label>Trigger Action *</mat-label>
+            <mat-select
+              formControlName="triggerAction"
+              (selectionChange)="onFieldUpdate('triggerAction')"
+            >
+              <mat-option
+                *ngFor="let triggerActionInfoItem of TriggerActionInfo"
+                [value]="triggerActionInfoItem.value"
+              >
+                {{ triggerActionInfoItem.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="triggerForm.controls['triggerAction'].hasError('required')"
+            >
+              Action is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-checkbox
+            formControlName="active"
+            (click)="onFieldUpdate('active', 'Toggle')"
+            labelPosition="before"
+            >Trigger Is Active?</mat-checkbox
+          >
+        </div>
+      </div>
     </fieldset>
 
     <br />
@@ -91,5 +122,7 @@
       <mat-icon>clear</mat-icon>
       Delete
     </button>
+
+    <div *ngFor="let sensor of sensors">{{ sensor.name }}<br /></div>
   </form>
 </div>
