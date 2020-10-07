@@ -76,6 +76,15 @@
     <ng-container *ngIf="crudAction != Crud.Create">
       <div class="prompt">Users</div>
       <mat-card>
+        <button
+          mat-raised-button
+          (click)="updateUsers()"
+          id="btnUpdateUsers"
+          style="float: right; margin-bottom: 10px"
+        >
+          Update Users
+        </button>
+        <br />
         <div>
           <ng-container
             *ngFor="let userRef of application?.userRefs; let i = index"
@@ -87,17 +96,6 @@
             *ngIf="!application?.userRefs || application?.userRefs.length == 0"
             >None</ng-container
           >
-          <div>
-            <button
-              mat-button-raised
-              [disabled]="crudAction == Crud.Delete"
-              (click)="updateUsers()"
-              id="btnUpdateUsers"
-              style="margin-top: 10px"
-            >
-              Update Users
-            </button>
-          </div>
         </div>
       </mat-card>
     </ng-container>
@@ -105,6 +103,16 @@
     <ng-container *ngIf="crudAction != Crud.Create">
       <div class="prompt">Devices</div>
       <mat-card>
+        <button
+          mat-raised-button
+          [disabled]="crudAction == Crud.Delete"
+          (click)="updateDevices()"
+          id="btnUpdateDevices"
+          style="float: right; margin-bottom: 10px"
+        >
+          Update Devices
+        </button>
+        <br />
         <div>
           <ng-container
             *ngFor="let deviceRef of application?.deviceRefs; let i = index"
@@ -118,17 +126,6 @@
             "
             >None</ng-container
           >
-          <div>
-            <button
-              mat-button-raised
-              [disabled]="crudAction == Crud.Delete"
-              (click)="updateDevices()"
-              id="btnUpdateDevices"
-              style="margin-top: 10px"
-            >
-              Update Devices
-            </button>
-          </div>
         </div>
       </mat-card>
     </ng-container>
