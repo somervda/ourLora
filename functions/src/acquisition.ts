@@ -65,7 +65,7 @@ export const mailbox = functions.https.onRequest(async (request, response) => {
         break;
       }
       case "LTE": {
-        iotDataSource = IotDataSource.LTE;
+        iotDataSource = IotDataSource.Direct;
         //statements;
         deviceId = request.body["device_id"];
         break;
