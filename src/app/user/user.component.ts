@@ -7,7 +7,6 @@ import { User } from "../models/user.model";
 import { HelperService } from "../services/helper.service";
 import { AuthService } from "./../services/auth.service";
 import { UserService } from "./../services/user.service";
-import { UsergroupselectordialogComponent } from "../dialogs/usergroupselectordialog/usergroupselectordialog.component";
 
 @Component({
   selector: "app-user",
@@ -98,28 +97,6 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     return sDate;
-  }
-
-  updateUserGroups() {
-    // console.log("updateUserGroups");
-    let refSelected = [];
-    if (this.user.usergroups) {
-      refSelected = [...this.user.usergroups];
-    }
-
-    const dialogRef = this.dialog.open(UsergroupselectordialogComponent, {
-      minWidth: "380px",
-      maxWidth: "500px",
-      width: "80%",
-      autoFocus: false,
-      data: { refSelected: refSelected },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        // console.log("update usergroups", result);
-        this.userService.dbFieldUpdate(this.uid, "usergroups", result);
-      }
-    });
   }
 
   ngOnDestroy() {

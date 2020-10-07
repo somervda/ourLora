@@ -11,10 +11,7 @@ import { UsersComponent } from "./users/users.component";
 import { UserComponent } from "./user/user.component";
 import { UserResolver } from "./services/user-resolver";
 import { NotauthorizedComponent } from "./notauthorized/notauthorized.component";
-import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { permissionGuard } from "./guards/permission.guard";
-import { UsergroupComponent } from "./usergroup/usergroup.component";
-import { UsergroupResolver } from "./services/usergroup-resolver";
 import { DevicetypesComponent } from "./devicetypes/devicetypes.component";
 import { DevicetypeComponent } from "./devicetype/devicetype.component";
 import { DevicesComponent } from "./devices/devices.component";
@@ -188,35 +185,7 @@ const routes: Routes = [
     data: { permissions: ["isActivated"] },
     runGuardsAndResolvers: "always",
   },
-  //  Usersgroups
-  {
-    path: "usergroups",
-    component: UsergroupsComponent,
-    canActivate: [permissionGuard],
-    data: { permissions: ["isAdmin"] },
-  },
-  {
-    path: "usergroup/create",
-    component: UsergroupComponent,
-    canActivate: [permissionGuard],
-    data: { permissions: ["isAdmin"] },
-  },
-  {
-    path: "usergroup/:id/delete",
-    component: UsergroupComponent,
-    resolve: { usergroup: UsergroupResolver },
-    canActivate: [permissionGuard],
-    data: { permissions: ["isAdmin"] },
-    runGuardsAndResolvers: "always",
-  },
-  {
-    path: "usergroup/:id",
-    component: UsergroupComponent,
-    resolve: { usergroup: UsergroupResolver },
-    canActivate: [permissionGuard],
-    data: { permissions: ["isAdmin"] },
-    runGuardsAndResolvers: "always",
-  },
+
   //  Other
   { path: "notfound", component: NotfoundComponent },
   { path: "**", component: NotfoundComponent },

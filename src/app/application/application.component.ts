@@ -8,6 +8,7 @@ import { HelperService } from "../services/helper.service";
 import { ApplicationService } from "../services/application.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DeviceselectordialogComponent } from "../dialogs/deviceselectordialog/deviceselectordialog.component";
+import { UserselectordialogComponent } from "../dialogs/userselectordialog/userselectordialog.component";
 
 @Component({
   selector: "app-application",
@@ -48,6 +49,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
         name: "",
         description: "",
         deviceRefs: null,
+        userRefs: null,
       };
     } else {
       this.application = this.route.snapshot.data["application"];
@@ -162,6 +164,33 @@ export class ApplicationComponent implements OnInit, OnDestroy {
           result
         );
         this.application.deviceRefs = result;
+      }
+    });
+  }
+
+  updateUsers() {
+    // console.log("updateUserGroups");
+    let refSelected = [];
+    if (this.application.userRefs) {
+      refSelected = [...this.application.userRefs];
+    }
+
+    const dialogRef = this.dialog.open(UserselectordialogComponent, {
+      minWidth: "380px",
+      maxWidth: "500px",
+      width: "80%",
+      autoFocus: false,
+      data: { refSelected: refSelected },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // console.log("update usergroups", result);
+        this.applicationService.fieldUpdate(
+          this.application.id,
+          "userRefs",
+          result
+        );
+        this.application.userRefs = result;
       }
     });
   }

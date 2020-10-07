@@ -34,16 +34,6 @@
           <mat-icon>how_to_reg</mat-icon>
           <span id="mainMenuUsers">&nbsp;Users</span>
         </a>
-        <!-- Usergroup Management -->
-        <a
-          mat-list-item
-          *ngIf="(auth.user$ | async)?.isAdmin"
-          mat-list-item
-          routerLink="usergroups"
-        >
-          <mat-icon>group</mat-icon>
-          <span id="mainMenuUsergroups">&nbsp;User Groups</span>
-        </a>
         <!-- Devicetypes -->
         <a
           mat-list-item

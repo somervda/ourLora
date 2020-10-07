@@ -65,31 +65,5 @@
         matTooltip="Users must be activated before any access is provided to the system"
       ></mat-checkbox>
     </div>
-    <div class="prompt">Member of Groups</div>
-    <div>
-      <ng-container
-        *ngFor="let usergroup of (user$ | async)?.usergroups; let i = index"
-      >
-        <ng-container *ngIf="i > 0">, </ng-container>
-        <span> {{ (usergroup | doc | async)?.name }}</span>
-      </ng-container>
-      <ng-container
-        *ngIf="
-          !(user$ | async)?.usergroups ||
-          (user$ | async)?.usergroups.length == 0
-        "
-        >None</ng-container
-      >
-      <div>
-        <button
-          mat-button-raised
-          *ngIf="fullAccess"
-          (click)="updateUserGroups()"
-          id="btnUpdateUserGroups"
-        >
-          Update Group Membership
-        </button>
-      </div>
-    </div>
   </div>
 </div>

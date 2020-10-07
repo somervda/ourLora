@@ -41,21 +41,19 @@ import { DocPipe } from "./pipes/doc.pipe";
 import { TruncatePipe } from "./pipes/truncate.pipe";
 import { SubheadingComponent } from "./shared/subheading/subheading.component";
 import { UserComponent } from "./user/user.component";
-import { UsergroupComponent } from "./usergroup/usergroup.component";
-import { UsergroupsComponent } from "./usergroups/usergroups.component";
 import { UsersComponent } from "./users/users.component";
-import { UsergroupselectordialogComponent } from "./dialogs/usergroupselectordialog/usergroupselectordialog.component";
 import { DevicetypesComponent } from "./devicetypes/devicetypes.component";
 import { DevicetypeComponent } from "./devicetype/devicetype.component";
 import { DeviceComponent } from "./device/device.component";
 import { DevicesComponent } from "./devices/devices.component";
-import { SensorComponent } from './sensor/sensor.component';
-import { SensorslistComponent } from './shared/sensorslist/sensorslist.component';
-import { ApplicationsComponent } from './applications/applications.component';
-import { ApplicationComponent } from './application/application.component';
-import { DeviceselectordialogComponent } from './dialogs/deviceselectordialog/deviceselectordialog.component';
-import { TriggerComponent } from './trigger/trigger.component';
-import { TriggerslistComponent } from './shared/triggerslist/triggerslist.component';
+import { SensorComponent } from "./sensor/sensor.component";
+import { SensorslistComponent } from "./shared/sensorslist/sensorslist.component";
+import { ApplicationsComponent } from "./applications/applications.component";
+import { ApplicationComponent } from "./application/application.component";
+import { DeviceselectordialogComponent } from "./dialogs/deviceselectordialog/deviceselectordialog.component";
+import { TriggerComponent } from "./trigger/trigger.component";
+import { TriggerslistComponent } from "./shared/triggerslist/triggerslist.component";
+import { UserselectordialogComponent } from "./dialogs/userselectordialog/userselectordialog.component";
 
 @NgModule({
   declarations: [
@@ -69,10 +67,7 @@ import { TriggerslistComponent } from './shared/triggerslist/triggerslist.compon
     NotauthorizedComponent,
     DocPipe,
     SubheadingComponent,
-    UsergroupsComponent,
     TruncatePipe,
-    UsergroupComponent,
-    UsergroupselectordialogComponent,
     DevicetypesComponent,
     DevicetypeComponent,
     DeviceComponent,
@@ -84,6 +79,7 @@ import { TriggerslistComponent } from './shared/triggerslist/triggerslist.compon
     DeviceselectordialogComponent,
     TriggerComponent,
     TriggerslistComponent,
+    UserselectordialogComponent,
   ],
   imports: [
     BrowserModule,

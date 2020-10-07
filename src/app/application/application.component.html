@@ -74,6 +74,35 @@
     </fieldset>
 
     <ng-container *ngIf="crudAction != Crud.Create">
+      <div class="prompt">Users</div>
+      <mat-card>
+        <div>
+          <ng-container
+            *ngFor="let userRef of application?.userRefs; let i = index"
+          >
+            <ng-container *ngIf="i > 0">, </ng-container>
+            <span> {{ (userRef | doc | async)?.displayName }}</span>
+          </ng-container>
+          <ng-container
+            *ngIf="!application?.userRefs || application?.userRefs.length == 0"
+            >None</ng-container
+          >
+          <div>
+            <button
+              mat-button-raised
+              [disabled]="crudAction == Crud.Delete"
+              (click)="updateUsers()"
+              id="btnUpdateUsers"
+              style="margin-top: 10px"
+            >
+              Update Users
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </ng-container>
+
+    <ng-container *ngIf="crudAction != Crud.Create">
       <div class="prompt">Devices</div>
       <mat-card>
         <div>

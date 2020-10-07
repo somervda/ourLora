@@ -5,4 +5,5 @@ export interface Application {
   name: string;
   description: string;
   deviceRefs: DocumentReference[];
+  userRefs: DocumentReference[];
 }

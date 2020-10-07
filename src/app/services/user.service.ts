@@ -10,6 +10,7 @@ import OrderByDirection = firebase.firestore.OrderByDirection;
   providedIn: "root",
 })
 export class UserService {
+  collectionName = "users";
   constructor(private afs: AngularFirestore) {}
 
   findUserByUid(uid: string): Observable<User> {
@@ -20,6 +21,25 @@ export class UserService {
         map((snaps) => {
           const users = convertSnaps<User>(snaps);
           return users.length == 1 ? users[0] : undefined;
+        })
+      );
+  }
+
+  /**
+   * Find all Users
+   * @param pageSize The maximum number of Users to return
+   */
+  findAll(pageSize: number): Observable<User[]> {
+    // console.log("User findAll", pageSize);
+    return this.afs
+      .collection(this.collectionName, (ref) =>
+        ref.orderBy("displayName").limit(pageSize)
+      )
+      .snapshotChanges()
+      .pipe(
+        map((snaps) => {
+          // console.log("find Users", convertSnaps<User>(snaps));
+          return convertSnaps<User>(snaps);
         })
       );
   }

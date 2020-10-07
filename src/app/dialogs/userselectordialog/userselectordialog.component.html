@@ -1,15 +1,13 @@
-<div class="dialog-heading">Select Group Membership</div>
+<div class="dialog-heading">User Selector</div>
 
 <div class="dialog-list">
   <div
     class="list-item"
-    *ngFor="let usergroup of usergroups$ | async"
-    [style.backgroundColor]="
-      isInUsergroup(usergroup.id) ? 'lightgrey' : 'white'
-    "
-    (click)="onListItemSelected(usergroup.id)"
+    *ngFor="let user of users$ | async"
+    [style.backgroundColor]="isInUser(user.id) ? 'lightgrey' : 'white'"
+    (click)="onListItemSelected(user.id)"
   >
-    {{ usergroup.name }}
+    {{ user.displayName }}
   </div>
 </div>
 
