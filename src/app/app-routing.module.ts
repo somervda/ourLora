@@ -22,6 +22,8 @@ import { ApplicationsComponent } from "./applications/applications.component";
 import { ApplicationComponent } from "./application/application.component";
 import { ApplicationResolver } from "./services/application-resolver";
 import { TriggerResolver } from "./services/trigger-resolver";
+import { ViewComponent } from "./view/view.component";
+import { ViewResolver } from "./services/view-resolver";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -183,6 +185,30 @@ const routes: Routes = [
     resolve: { user: UserResolver },
     canActivate: [permissionGuard],
     data: { permissions: ["isActivated"] },
+    runGuardsAndResolvers: "always",
+  },
+
+  //  View
+  {
+    path: "application/:aid/view/create",
+    component: ViewComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+  },
+  {
+    path: "application/:aid/view/:vid/delete",
+    component: ViewComponent,
+    resolve: { view: ViewResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
+    runGuardsAndResolvers: "always",
+  },
+  {
+    path: "application/:aid/view/:vid",
+    component: ViewComponent,
+    resolve: { view: ViewResolver },
+    canActivate: [permissionGuard],
+    data: { permissions: ["isAdmin"] },
     runGuardsAndResolvers: "always",
   },
 

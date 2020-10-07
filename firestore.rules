@@ -45,11 +45,6 @@ service cloud.firestore {
                           );
     }
 
-    match /{path=**}/usergroups/{id} {
-      allow read:  if isAuthenticated();
-      allow write:  if isAdmin();
-    }
-
     match /{path=**}/devicetypes/{id} {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
@@ -74,7 +69,12 @@ service cloud.firestore {
       allow write:  if isAdmin();
     }
 
-        match /{path=**}/applications/{aid}/triggers/{tid} {
+    match /{path=**}/applications/{aid}/triggers/{tid} {
+      allow read:  if isAuthenticated();
+      allow write:  if isAdmin();
+    }
+
+    match /{path=**}/applications/{aid}/views/{tid} {
       allow read:  if isAuthenticated();
       allow write:  if isAdmin();
     }

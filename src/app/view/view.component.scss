@@ -1,0 +1,35 @@
+.standard-form {
+  min-width: 300px;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 50%;
+  padding-right: 8px;
+  min-width: 350px;
+}
+
+mat-form-field {
+  padding-bottom: 8px;
+}
+
+table {
+  width: 100%;
+}
+
+.gridcell {
+  padding-bottom: 15px;
+}
+
+// Create a 2 column layout when screen is more than 500px wide
+@media (min-width: 750px) {
+  .gridwrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+  }
+}

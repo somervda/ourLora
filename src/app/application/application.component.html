@@ -138,6 +138,12 @@
       *ngIf="crudAction != Crud.Create"
       [disabled]="crudAction == Crud.Delete"
     ></app-triggerslist>
+    <div class="prompt">Views</div>
+    <app-viewslist
+      [application]="application"
+      *ngIf="crudAction != Crud.Create"
+      [disabled]="crudAction == Crud.Delete"
+    ></app-viewslist>
     <br />
     <button
       mat-raised-button

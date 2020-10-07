@@ -6,39 +6,36 @@ import { Sensor } from "functions/src/models/sensor.model";
 import { Observable, Subscription } from "rxjs";
 import { Application } from "../models/application.model";
 import { Crud } from "../models/helper.model";
-import { Trigger, TriggerActionInfo } from "../models/trigger.model";
+import { View, ViewTypeInfo } from "../models/view.model";
 import { ApplicationService } from "../services/application.service";
 import { HelperService } from "../services/helper.service";
 import { SensorService } from "../services/sensor.service";
-import { TriggerService } from "../services/trigger.service";
+import { ViewService } from "../services/view.service";
 
 @Component({
-  selector: "app-trigger",
-  templateUrl: "./trigger.component.html",
-  styleUrls: ["./trigger.component.scss"],
+  selector: "app-view",
+  templateUrl: "./view.component.html",
+  styleUrls: ["./view.component.scss"],
 })
-export class TriggerComponent implements OnInit, OnDestroy {
-  trigger: Trigger;
+export class ViewComponent implements OnInit, OnDestroy {
+  view: View;
   aid: string;
   application$: Observable<Application>;
   crudAction: Crud;
   // Declare an instance of crud enum to use for checking crudAction value
   Crud = Crud;
 
-  triggerForm: FormGroup;
-  trigger$$: Subscription;
-  TriggerActionInfo = TriggerActionInfo;
+  viewForm: FormGroup;
+  view$$: Subscription;
+  ViewTypeInfo = ViewTypeInfo;
 
   // sensors processing
   application$$: Subscription;
-  // devices$: Observable<Device[]>;
-  // devices$$: Subscription;
-  // devicetypes$: Observable<Devicetype[]>;
   sensors$$: Subscription;
   sensors: Sensor[];
 
   constructor(
-    private triggerService: TriggerService,
+    private viewService: ViewService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private helper: HelperService,
@@ -48,46 +45,42 @@ export class TriggerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log(
-      "trigger init :",
+      "view init :",
       this.route.snapshot.paramMap.get("aid"),
-      this.route.snapshot.paramMap.get("tid")
+      this.route.snapshot.paramMap.get("vid")
     );
     this.sensors = [];
     this.aid = this.route.snapshot.paramMap.get("aid");
     this.application$ = this.applicationService.findById(this.aid);
     this.crudAction = Crud.Update;
-    if (this.route.routeConfig.path == "application/:aid/trigger/:tid/delete")
+    if (this.route.routeConfig.path == "application/:aid/view/:vid/delete")
       this.crudAction = Crud.Delete;
-    if (this.route.routeConfig.path == "application/:aid/trigger/create")
+    if (this.route.routeConfig.path == "application/:aid/view/create")
       this.crudAction = Crud.Create;
 
     if (this.crudAction == Crud.Create) {
-      this.trigger = {
+      this.view = {
         name: "",
         description: "",
-        active: null,
         sensorRef: null,
-        triggerAction: null,
-        triggerRangeMin: null,
-        triggerRangeMax: null,
-        message: null,
+        viewType: null,
       };
     } else {
-      this.trigger = this.route.snapshot.data["trigger"];
-      this.trigger$$ = this.triggerService
-        .findById(this.aid, this.trigger.id)
-        .subscribe((trigger) => {
-          this.trigger = trigger;
-          this.triggerForm.patchValue(this.trigger);
+      this.view = this.route.snapshot.data["view"];
+      this.view$$ = this.viewService
+        .findById(this.aid, this.view.id)
+        .subscribe((view) => {
+          this.view = view;
+          this.viewForm.patchValue(this.view);
         });
     }
 
     this.getSensors();
 
     // Create form group and initialize with probe values
-    this.triggerForm = this.fb.group({
+    this.viewForm = this.fb.group({
       name: [
-        this.trigger.name,
+        this.view.name,
         [
           Validators.required,
           Validators.minLength(3),
@@ -95,76 +88,56 @@ export class TriggerComponent implements OnInit, OnDestroy {
         ],
       ],
       description: [
-        this.trigger.description,
+        this.view.description,
         [
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(500),
         ],
       ],
-      message: [
-        this.trigger.message,
-        [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(500),
-        ],
-      ],
-      triggerAction: [this.trigger.triggerAction, [Validators.required]],
-      active: [this.trigger.active],
-      sensorRef: [this.trigger.sensorRef, [Validators.required]],
-      triggerRangeMin: [
-        this.trigger.triggerRangeMin,
-        [Validators.required, Validators.pattern("^[-+]?[0-9]*.?[0-9]+$")],
-      ],
-      triggerRangeMax: [
-        this.trigger.triggerRangeMax,
-        [Validators.required, Validators.pattern("^[-+]?[0-9]*.?[0-9]+$")],
-      ],
+      viewType: [this.view.viewType, [Validators.required]],
+      sensorRef: [this.view.sensorRef, [Validators.required]],
     });
 
-    // Mark all fields as touched to trigger validation on initial entry to the fields
+    // Mark all fields as touched to view validation on initial entry to the fields
     if (this.crudAction != Crud.Create) {
-      for (const field in this.triggerForm.controls) {
-        this.triggerForm.get(field).markAsTouched();
+      for (const field in this.viewForm.controls) {
+        this.viewForm.get(field).markAsTouched();
       }
     }
   }
 
   onCreate() {
-    console.log("create trigger", this.aid, this.trigger);
-    for (const field in this.triggerForm.controls) {
-      this.trigger[field] = this.triggerForm.get(field).value;
+    console.log("create view", this.aid, this.view);
+    for (const field in this.viewForm.controls) {
+      this.view[field] = this.viewForm.get(field).value;
     }
-    this.triggerService
-      .create(this.aid, this.trigger)
+    this.viewService
+      .create(this.aid, this.view)
       .then((newDoc) => {
         this.crudAction = Crud.Update;
-        this.trigger.id = newDoc.id;
-        this.helper.snackbar(
-          "Trigger '" + this.trigger.name + "' created.",
-          2000
-        );
+        this.view.id = newDoc.id;
+        this.helper.snackbar("View '" + this.view.name + "' created.", 2000);
         this.helper.redirect(
-          "/application/" + this.aid + "/trigger/" + this.trigger.id
+          "/application/" + this.aid + "/view/" + this.view.id
         );
       })
       .catch(function (error) {
-        console.error("Error adding document: ", this.trigger.name, error);
+        console.error("Error adding document: ", this.view.name, error);
       });
   }
 
   onDelete() {
-    console.log("delete", this.aid, this.trigger.id);
-    const name = this.trigger.name;
-    this.triggerService
-      .delete(this.aid, this.trigger.id)
+    console.log("delete", this.aid, this.view.id);
+    const name = this.view.name;
+    this.viewService
+      .delete(this.aid, this.view.id)
       .then(() => {
-        this.helper.snackbar("Trigger '" + name + "' deleted!", 2000);
+        this.helper.snackbar("View '" + name + "' deleted!", 2000);
         this.helper.redirect("/application/" + this.aid);
       })
       .catch(function (error) {
-        console.error("Error deleting trigger: ", error);
+        console.error("Error deleting view: ", error);
       });
   }
 
@@ -182,30 +155,21 @@ export class TriggerComponent implements OnInit, OnDestroy {
 
   onFieldUpdate(fieldName: string, toType?: string) {
     if (
-      this.triggerForm.get(fieldName).valid &&
-      this.trigger.id != "" &&
+      this.viewForm.get(fieldName).valid &&
+      this.view.id != "" &&
       this.aid &&
       this.crudAction != Crud.Delete
     ) {
-      let newValue = this.triggerForm.get(fieldName).value;
-      if (toType && toType == "Toggle") {
-        newValue = !newValue;
-      }
-
+      let newValue = this.viewForm.get(fieldName).value;
       console.log("update:", fieldName, newValue);
-      this.triggerService.fieldUpdate(
-        this.aid,
-        this.trigger.id,
-        fieldName,
-        newValue
-      );
+      this.viewService.fieldUpdate(this.aid, this.view.id, fieldName, newValue);
     }
   }
 
   /**
-   * Load the sensors array with all the sensors that could be used by the trigger
-   * This runs through the relationships from the triggers parent application->
-   * to the devices for the application -> to the devicetypee of those devices ->
+   * Load the sensors array with all the sensors that could be used by the view
+   * This runs through the relationships from the view parent application->
+   * to the devices for the application -> to the devicetype of those devices ->
    * and then getting the sensors for those devicetypes (only add unique sensors)
    *
    */
@@ -249,7 +213,7 @@ export class TriggerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.trigger$$) this.trigger$$.unsubscribe();
+    if (this.view$$) this.view$$.unsubscribe();
     if (this.application$$) this.application$$.unsubscribe();
     if (this.sensors$$) this.sensors$$.unsubscribe();
   }

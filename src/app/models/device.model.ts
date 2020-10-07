@@ -18,45 +18,41 @@ export interface Device {
 export enum IotDataSource {
   "TheThingsNetwork" = 1,
   "SigFox" = 2,
-  "nb-iot" = 3,
-  "Internet" = 4,
+  "Direct" = 4,
   "Hologram" = 5,
   "curl" = 6,
-  "LTE" = 7,
 }
 
 export interface IotDataSourceInfoItem {
   iotDataSource: IotDataSource;
   name: string;
+  nameShort: string;
 }
 
 export const IotDataSourceInfo: IotDataSourceInfoItem[] = [
   {
     iotDataSource: IotDataSource.TheThingsNetwork,
     name: "The Things Network",
+    nameShort: "TTN",
   },
   {
     iotDataSource: IotDataSource.SigFox,
     name: "SigFox",
+    nameShort: "SigFox",
   },
   {
-    iotDataSource: IotDataSource["nb-iot"],
-    name: "NB-IOT",
-  },
-  {
-    iotDataSource: IotDataSource.Internet,
-    name: "Internet",
+    iotDataSource: IotDataSource.Direct,
+    name: "Direct internet connection from device",
+    nameShort: "Direct",
   },
   {
     iotDataSource: IotDataSource.Hologram,
     name: "Hologram",
+    nameShort: "Hologram",
   },
   {
     iotDataSource: IotDataSource.curl,
-    name: "curl testing",
-  },
-  {
-    iotDataSource: IotDataSource.LTE,
-    name: "LTE Direct",
+    name: "curl interface for testing",
+    nameShort: "curl",
   },
 ];

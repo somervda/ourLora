@@ -16,8 +16,6 @@ export interface Trigger {
   triggerRangeMax: number;
   message: string;
   triggerAction: TriggerAction;
-  // TargetRef is a user or usergroup
-  targetRef?: DocumentReference;
 }
 
 /**
