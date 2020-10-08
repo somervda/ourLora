@@ -6,6 +6,7 @@ import { Application } from "./models/application.model";
 import * as functions from "firebase-functions";
 import { db } from "./init";
 import * as admin from "firebase-admin";
+import { eventTrigger } from "./trigger";
 
 /**
  * The https function accepting IOT data from the various IOT middleware systems supported
@@ -309,7 +310,10 @@ async function writeEvent(
         iotDataSource: iotDataSource,
       };
       console.log("Event to write", JSON.stringify(event));
-      await db.collection("events").add(event);
+      const { id } = await db.collection("events").add(event);
+      console.log("after write", id);
+      const newEvent: Event = <Event>{ id: id, ...event };
+      eventTrigger(newEvent);
     }
   });
 }

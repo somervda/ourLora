@@ -20,6 +20,7 @@ import { ViewService } from "../services/view.service";
 export class ViewComponent implements OnInit, OnDestroy {
   view: View;
   aid: string;
+  dtid: string;
   application$: Observable<Application>;
   crudAction: Crud;
   // Declare an instance of crud enum to use for checking crudAction value
@@ -186,9 +187,10 @@ export class ViewComponent implements OnInit, OnDestroy {
               const devicetypeRef = <DocumentReference>(
                 device.data()?.deviceTypeRef
               );
+              this.dtid = devicetypeRef.id;
               // Get all sensors for devicetypeRef(s)
               this.sensors$$ = this.sensorService
-                .findAll(devicetypeRef.id, 100)
+                .findAll(this.dtid, 100)
                 .subscribe((sensors) => {
                   sensors.forEach((sensor) => {
                     // Add sensor to sensor array if it isn't a duplicate
@@ -209,7 +211,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   getSensorRef(id: string) {
-    return this.helper.docRef("applications/" + this.aid + "/sensors/" + id);
+    return this.helper.docRef("devidetypes/" + this.dtid + "/sensors/" + id);
   }
 
   ngOnDestroy() {
