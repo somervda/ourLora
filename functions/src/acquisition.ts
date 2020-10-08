@@ -2,6 +2,7 @@ import { Device, IotDataSource } from "./models/device.model";
 import { Devicetype } from "./models/devicetype.model";
 import { Sensor } from "./models/sensor.model";
 import { Event } from "./models/event.model";
+import { Application } from "./models/application.model";
 import * as functions from "firebase-functions";
 import { db } from "./init";
 import * as admin from "firebase-admin";
@@ -160,6 +161,29 @@ async function prepareAndWriteEvent(
     }
   }
 
+  // Retrieve the applications for the device
+  let applications: Application[] = [];
+  if (device) {
+    if (device.id) {
+      const applicationsRef = <FirebaseFirestore.CollectionReference>(
+        db.collection("applications")
+      );
+      const deviceRef = db.collection("devices/").doc(device.id);
+      await applicationsRef
+        .where("deviceRefs", "array-contains", deviceRef)
+        .get()
+        .then((applicationDocs) => {
+          applicationDocs.forEach((applicationDoc) =>
+            applications.push(<Application>{
+              id: applicationDoc.id,
+              ...applicationDoc.data(),
+            })
+          );
+        })
+        .catch();
+    }
+  }
+
   // Look up devicetype
   if (device) {
     const devicetype = await device.deviceTypeRef
@@ -194,6 +218,7 @@ async function prepareAndWriteEvent(
         device,
         devicetype,
         sensors,
+        applications,
         iotDataSource,
         requestBody,
         timestamp
@@ -208,7 +233,8 @@ async function prepareAndWriteEvent(
  * Extracts the sensor data from the request.body and writes an event document
  * @param device the device object associated with the IOT data
  * @param devicetype the devicetype object associated with the IOT data
- * @param sensors the sensors object associated with the IOT data devicetype
+ * @param sensors the sensor objects associated with the IOT data devicetype
+ * @param applications the application objects that include the device
  * @param iotDataSource the source of the IOT data
  * @param requestBody the body of the http request sent to this function from the IOTDataSource
  * @param timestamp The current date and time (used as a single timestamp applied to all event documents generated from the IOT request)
@@ -217,6 +243,7 @@ async function writeEvent(
   device: Device,
   devicetype: Devicetype,
   sensors: Sensor[],
+  applications: Application[],
   iotDataSource: IotDataSource,
   requestBody: any,
   timestamp: Date
@@ -255,6 +282,16 @@ async function writeEvent(
         }
       }
 
+      // Create an array of application docRefs for including in the event
+      let applicationRefs: admin.firestore.DocumentReference[] = [];
+      applications.forEach((e) => {
+        applicationRefs.push(
+          <FirebaseFirestore.DocumentReference>(
+            db.collection("applications").doc(e.id)
+          )
+        );
+      });
+
       const event: Event = {
         timestamp: admin.firestore.Timestamp.fromDate(timestamp),
         value: value,
@@ -268,7 +305,7 @@ async function writeEvent(
           .doc(devicetype.id)
           .collection("sensors")
           .doc(sensor.id),
-        applicationRefs: [],
+        applicationRefs: applicationRefs,
         iotDataSource: iotDataSource,
       };
       console.log("Event to write", JSON.stringify(event));
