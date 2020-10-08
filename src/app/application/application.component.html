@@ -74,16 +74,18 @@
     </fieldset>
 
     <ng-container *ngIf="crudAction != Crud.Create">
-      <div class="prompt">Users</div>
       <mat-card>
-        <button
-          mat-raised-button
-          (click)="updateUsers()"
-          id="btnUpdateUsers"
-          style="float: right; margin-bottom: 10px"
-        >
-          Update Users
-        </button>
+        <div>
+          <span class="prompt">Users</span>
+          <button
+            mat-raised-button
+            (click)="updateUsers()"
+            id="btnUpdateUsers"
+            style="float: right; margin-bottom: 20px; width: 200px"
+          >
+            Update Users
+          </button>
+        </div>
         <br />
         <div>
           <ng-container
@@ -99,19 +101,21 @@
         </div>
       </mat-card>
     </ng-container>
-
+    <br />
     <ng-container *ngIf="crudAction != Crud.Create">
-      <div class="prompt">Devices</div>
       <mat-card>
-        <button
-          mat-raised-button
-          [disabled]="crudAction == Crud.Delete"
-          (click)="updateDevices()"
-          id="btnUpdateDevices"
-          style="float: right; margin-bottom: 10px"
-        >
-          Update Devices
-        </button>
+        <div>
+          <span class="prompt">Devices</span>
+          <button
+            mat-raised-button
+            [disabled]="crudAction == Crud.Delete"
+            (click)="updateDevices()"
+            id="btnUpdateDevices"
+            style="float: right; margin-bottom: 20px; width: 200px"
+          >
+            Update Devices
+          </button>
+        </div>
         <br />
         <div>
           <ng-container
@@ -129,13 +133,13 @@
         </div>
       </mat-card>
     </ng-container>
-    <div class="prompt">Triggers</div>
+    <br />
     <app-triggerslist
       [application]="application"
       *ngIf="crudAction != Crud.Create"
       [disabled]="crudAction == Crud.Delete"
     ></app-triggerslist>
-    <div class="prompt">Views</div>
+    <br />
     <app-viewslist
       [application]="application"
       *ngIf="crudAction != Crud.Create"

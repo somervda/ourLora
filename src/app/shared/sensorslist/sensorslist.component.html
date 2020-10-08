@@ -1,13 +1,16 @@
 <mat-card>
   <ng-container *ngIf="!disabled">
-    <button
-      mat-raised-button
-      [routerLink]="'/devicetype/' + devicetype.id + '/sensor/create'"
-      style="float: right; margin-bottom: 10px"
-    >
-      <i class="material-icons-outlined">add</i>&nbsp;
-      <span>Create a New Sensor</span>
-    </button>
+    <div>
+      <span style="font-weight: 600">Sensors</span>
+      <button
+        mat-raised-button
+        [routerLink]="'/devicetype/' + devicetype.id + '/sensor/create'"
+        style="float: right; margin-bottom: 10px; width: 200px"
+      >
+        <i class="material-icons-outlined">add</i>&nbsp;
+        <span>Create a New Sensor</span>
+      </button>
+    </div>
     <br />
   </ng-container>
 

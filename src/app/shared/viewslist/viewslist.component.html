@@ -1,13 +1,16 @@
 <mat-card>
   <ng-container *ngIf="!disabled">
-    <button
-      mat-raised-button
-      [routerLink]="'/application/' + application.id + '/view/create'"
-      style="float: right; margin-bottom: 10px"
-    >
-      <i class="material-icons-outlined">add</i>&nbsp;
-      <span>Create a New View</span>
-    </button>
+    <div>
+      <span style="font-weight: 600">Views</span>
+      <button
+        mat-raised-button
+        [routerLink]="'/application/' + application.id + '/view/create'"
+        style="float: right; margin-bottom: 10px; width: 200px"
+      >
+        <i class="material-icons-outlined">add</i>&nbsp;
+        <span>Create a New View</span>
+      </button>
+    </div>
     <br />
   </ng-container>
 

@@ -1,14 +1,17 @@
 <mat-card>
   <ng-container *ngIf="!disabled">
-    <button
-      mat-raised-button
-      [routerLink]="'/application/' + application.id + '/trigger/create'"
-      style="float: right; margin-bottom: 10px"
-    >
-      <i class="material-icons-outlined">add</i>&nbsp;
-      <span>Create a New Trigger</span>
-    </button>
-    <br />
+    <div>
+      <span style="font-weight: 600">Triggers</span>
+      <button
+        mat-raised-button
+        [routerLink]="'/application/' + application.id + '/trigger/create'"
+        style="float: right; margin-bottom: 10px; width: 200px"
+      >
+        <i class="material-icons-outlined">add</i>&nbsp;
+        <span>Create a New Trigger</span>
+      </button>
+      <br />
+    </div>
   </ng-container>
 
   <table mat-table [dataSource]="triggers$ | async" class="mat-elevation-z8">
