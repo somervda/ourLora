@@ -34,10 +34,11 @@ function processApplicationSensorTrigger(
   );
   triggerCollectionRef
     .where("sensorRef", "==", event.sensorRef)
+    .where("active", "==", true)
     .get()
     .then((ts) => {
       ts.forEach((t) => {
-        // We found a matching trigger for this application and sensor
+        // We found a matching, active, trigger for this application and sensor
 
         const trigger: Trigger = <Trigger>{ id: t.id, ...t.data() };
         console.log("trigger:", JSON.stringify(trigger));
