@@ -36,21 +36,29 @@ function processApplicationSensorTrigger(
     .where("sensorRef", "==", event.sensorRef)
     .where("active", "==", true)
     .get()
-    .then((ts) => {
-      ts.forEach((t) => {
+    .then((triggerSnaps) => {
+      triggerSnaps.forEach((triggerSnap) => {
         // We found a matching, active, trigger for this application and sensor
-
-        const trigger: Trigger = <Trigger>{ id: t.id, ...t.data() };
+        const trigger: Trigger = <Trigger>{
+          id: triggerSnap.id,
+          ...triggerSnap.data(),
+        };
         console.log("trigger:", JSON.stringify(trigger));
-        // Process the trigger action, note a log is always done
-        writeTriggerLog(event, application, trigger);
-        switch (trigger.triggerAction) {
-          case TriggerAction.eMail:
-            // send an email to the application users
-            break;
-          case TriggerAction.Notification:
-            // Send a notification to each application user
-            break;
+        // Check if event value is within the required trigger range
+        if (
+          event.value >= trigger.triggerRangeMin &&
+          event.value <= trigger.triggerRangeMax
+        ) {
+          // Process the trigger action, note a log is always done
+          writeTriggerLog(event, application, trigger);
+          switch (trigger.triggerAction) {
+            case TriggerAction.eMail:
+              // send an email to the application users
+              break;
+            case TriggerAction.Notification:
+              // Send a notification to each application user
+              break;
+          }
         }
       });
     })
