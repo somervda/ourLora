@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { AngularFireMessaging } from "@angular/fire/messaging";
 import { BehaviorSubject, Subscription } from "rxjs";
 import { User } from "../models/user.model";
+import { HelperService } from "./helper.service";
 import { UserService } from "./user.service";
 @Injectable({
   providedIn: "root",
@@ -11,6 +12,7 @@ export class MessagingService {
   // public token: string = null;
   constructor(
     private angularFireMessaging: AngularFireMessaging,
+    private helper: HelperService,
     userService: UserService
   ) {
     this.angularFireMessaging.messaging.subscribe((_messaging) => {
@@ -38,7 +40,8 @@ export class MessagingService {
   receiveMessage() {
     this.angularFireMessaging.messages.subscribe((payload) => {
       console.log("new message received. ", payload);
-      // this.currentMessage.next(payload);
+      this.helper.snackbar("Hi:- " + payload["notification"]["title"], 2000);
+      this.currentMessage.next(payload);
     });
   }
 
