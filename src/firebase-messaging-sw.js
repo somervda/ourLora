@@ -1,6 +1,8 @@
 // Use same import script versions as current firebase version in package.json
-importScripts('https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/7.14.2/firebase-messaging.js');
+// Also check out https://github.com/angular/angularfire/issues/2299#issuecomment-662405207 
+// Some versioning updates needed to avoid RxJS errors
+importScripts('https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/7.16.1/firebase-messaging.js');
 firebase.initializeApp({
     apiKey: "AIzaSyAjBO7soCBefMn_6HvM2ucvalmheyOqOSE",
     authDomain: "ourlora-6afb9.firebaseapp.com",
