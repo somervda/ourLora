@@ -16,4 +16,7 @@ export interface User {
   // Indicates the user can use the application , by default
   // a user is inactive until an administrator activates them
   usergroups?: DocumentReference[];
+  // The Firebase Cloud Messaging (FCM) tokens registered for device
+  // Note: multiple users may register the same shared device (Deal with that when sending messages)
+  deviceMessagingTokens?: string[];
 }

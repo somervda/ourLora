@@ -1,0 +1,11 @@
+curl -X POST \
+  https://fcm.googleapis.com/fcm/send \
+  -H 'Authorization: key=AAAAFM2LRWE:APA91bELQ9FODKZhKyw193HiGtAjDTPGsvpjZvpBN0wyCXJr1mZZ9A9JEeSQqyiNBHAkbmHCM3oD-cWQDyrIx1uvqjj__ElvpteLfm_dqztEdFi6aDHCGBWZHfmxtvDq52vmeD4V5P8i' \
+  -H 'Content-Type: application/json' \
+  -d '{ 
+ "notification": {
+  "title": "Hey there", 
+  "body": "Subscribe to mighty ghost hack youtube channel"
+ },
+ "to" : "e5gMOXGiB9k4zCItqc-VB8:APA91bH8O2vn6GZmmi4vagBKrEp_luxkdzHCvGke5-Wzfgf7Rw0Jh99E94TQnVYVTYU-UGcBNfvMFoSZzjmyqbyBvLBaKDukCZRB5vF2-0GU89fc32UxPa88dO624emH_tROGp5N4mnQ"
+}'

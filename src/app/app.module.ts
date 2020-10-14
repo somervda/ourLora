@@ -3,6 +3,7 @@ import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { AngularFirePerformanceModule } from "@angular/fire/performance";
+import { AngularFireMessagingModule } from "@angular/fire/messaging";
 // import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFireStorageModule } from "@angular/fire/storage";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -90,6 +91,7 @@ import { ViewslistComponent } from "./shared/viewslist/viewslist.component";
     BrowserAnimationsModule,
     FormsModule,
     AppRoutingModule,
+    AngularFireMessagingModule,
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,

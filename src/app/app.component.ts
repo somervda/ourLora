@@ -3,6 +3,7 @@ import { AuthService } from "./services/auth.service";
 import { SwUpdate } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Observable, fromEvent, Subscription } from "rxjs";
+import { MessagingService } from "./services/messaging.service";
 
 @Component({
   selector: "app-root",
@@ -16,13 +17,19 @@ export class AppComponent implements OnInit, OnDestroy {
   offlineEvent$: Observable<Event>;
   subscriptions$$: Subscription[] = [];
 
+  message;
+
   constructor(
     public auth: AuthService,
     private swUpdate: SwUpdate,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private messagingService: MessagingService
   ) {}
 
   ngOnInit() {
+    this.messagingService.receiveMessage();
+    this.message = this.messagingService.currentMessage;
+
     // Determine if we are connected
     // See https://robinraju.dev/developer/2018-07-26-detecting-user-offline-in-angular/
     this.onlineEvent$ = fromEvent(window, "online");

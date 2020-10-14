@@ -65,5 +65,22 @@
         matTooltip="Users must be activated before any access is provided to the system"
       ></mat-checkbox>
     </div>
+    <div class="prompt">Allow my Messages to be sent to this device?</div>
+    <div>
+      <button
+      mat-button-raised
+      (click)="subscribeToMessaging()"
+    >
+      Subscribe
+    </button> 
+      <button
+      mat-button-raised
+      (click)="unsubscribeFromMessaging()"
+      style="margin-left: 10px;"
+    >
+      UnSubscribe
+    </button> 
+    </div>
+
   </div>
 </div>
