@@ -13,10 +13,7 @@ export interface User {
   // Indicates the user has administration rights including ability to
   // set a users roles
   isActivated?: Boolean;
-  // Indicates the user can use the application , by default
-  // a user is inactive until an administrator activates them
-  usergroups?: DocumentReference[];
   // The Firebase Cloud Messaging (FCM) tokens registered for device
-  // Note: multiple users may register the same shared device (Deal with that when sending messages)
-  deviceMessagingTokens?: string[];
+  // Note: Only one user can be associated with a certain device
+  deviceMessagingToken?: string;
 }

@@ -17,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   onlineEvent$: Observable<Event>;
   offlineEvent$: Observable<Event>;
   subscriptions$$: Subscription[] = [];
+  messages$$: Subscription;
 
   constructor(
     public auth: AuthService,
@@ -28,10 +29,36 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.messagingService.receiveMessage();
-    // this.messagingService.currentMessage.subscribe((message) => {
-    //   console.log("app.component message", JSON.stringify(message));
-    //   this.helper.snackbar("Hi:- " + message.notification.title, 2000);
-    // });
+
+    // this.messages$$ = this.messagingService.receiveMessage$.subscribe(
+    //   (message) => {
+    //     console.log("message:", message);
+    //   }
+    // );
+    this.messagingService.currentMessage.subscribe((message) => {
+      console.log("app.component message", JSON.stringify(message));
+      const msgCopy = { ...message };
+      // const title = <string>message["notification"]["title"];
+      console.log("app 1", JSON.stringify(msgCopy));
+      let title = "";
+      if (msgCopy && msgCopy != null) {
+        console.log("app 2", JSON.stringify(msgCopy).trim());
+        for (var prop in msgCopy) {
+          console.log("app 3", prop, msgCopy[prop]);
+          if (prop == "notification") {
+            const notification = msgCopy[prop];
+            console.log("app 4", notification);
+            for (var note in notification) {
+              console.log("app 5", note, notification[note]);
+              if (note == "title") {
+                title = notification[note];
+              }
+            }
+          }
+        }
+        this.helper.snackbar("Title: " + title, 2000);
+      }
+    });
 
     // Determine if we are connected
     // See https://robinraju.dev/developer/2018-07-26-detecting-user-offline-in-angular/

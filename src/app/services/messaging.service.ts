@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AngularFireMessaging } from "@angular/fire/messaging";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { User } from "../models/user.model";
 import { HelperService } from "./helper.service";
 import { UserService } from "./user.service";
@@ -9,7 +9,6 @@ import { UserService } from "./user.service";
 })
 export class MessagingService {
   currentMessage = new BehaviorSubject(null);
-  // public token: string = null;
   constructor(
     private angularFireMessaging: AngularFireMessaging,
     private helper: HelperService,
@@ -17,7 +16,6 @@ export class MessagingService {
   ) {
     this.angularFireMessaging.messaging.subscribe((_messaging) => {
       _messaging.onMessage = _messaging.onMessage.bind(_messaging);
-      _messaging.onTokenRefresh = _messaging.onTokenRefresh.bind(_messaging);
     });
   }
 
@@ -37,13 +35,21 @@ export class MessagingService {
       }
     );
   }
+
+  /**
+   * Initialize a subscription to receive and process FCM messages
+   */
   receiveMessage() {
     this.angularFireMessaging.messages.subscribe((payload) => {
-      console.log("new message received. ", payload);
-      this.helper.snackbar("Hi:- " + payload["notification"]["title"], 2000);
+      console.log("receiveMessage: ", payload);
+      // this.helper.snackbar("Hi:- " + payload["notification"]["title"], 2000);
       this.currentMessage.next(payload);
     });
   }
+
+  // receiveMessage$() {
+  //   return this.angularFireMessaging.messages;
+  // }
 
   /**
    * Delete the token if it exists, or create one and then delete it
@@ -57,10 +63,4 @@ export class MessagingService {
       });
     });
   }
-
-  // getToken() {
-  //   this.angularFireMessaging.getToken.subscribe((token) => {
-  //     console.log("getToken:", token);
-  //   });
-  // }
 }

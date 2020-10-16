@@ -65,7 +65,13 @@
         matTooltip="Users must be activated before any access is provided to the system"
       ></mat-checkbox>
     </div>
-    <div class="prompt">Allow my Messages to be sent to this device?</div>
+    <div 
+    class="prompt"
+    [matTooltip]='"Note: For messaging, only one person can be associated with each device," + 
+    " any other users who receive messages on this device will be disassociated." + 
+    " Recommendation is to associate messaging with your primary mobile device like a phone"'
+    >Send messages to this device?
+      </div>
     <div>
       <button
       mat-button-raised
