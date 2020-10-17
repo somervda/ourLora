@@ -22,7 +22,11 @@ export class MessagingService {
   /**
    * Will request permission to allow the use of messaging if not already set
    * (see in browser  settings -> Privacy & security -> site settings -> permissions -> notifications -> <site name>)
-   * Then will get the token (Will return either the existing token if already set, or a new token)
+   * Then will get the token (Will return either the existing token if already set, or a new token).
+   *
+   * The actual tokens are held in the local browser storage -> indexDb -> firebase-messaging-database -> firebase-messaging-store
+   * see node-modules->@firebase->messaging->dist->index.esm2017.js for more clues
+   *
    * @param user Used to add the token from the user's deviceMessagingTokens array (if not already present)
    */
   requestPermissionAndToken(user: User) {
@@ -41,15 +45,10 @@ export class MessagingService {
    */
   receiveMessage() {
     this.angularFireMessaging.messages.subscribe((payload) => {
-      console.log("receiveMessage: ", payload);
-      // this.helper.snackbar("Hi:- " + payload["notification"]["title"], 2000);
+      // console.log("receiveMessage: ", payload);
       this.currentMessage.next(payload);
     });
   }
-
-  // receiveMessage$() {
-  //   return this.angularFireMessaging.messages;
-  // }
 
   /**
    * Delete the token if it exists, or create one and then delete it

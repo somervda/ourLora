@@ -4,7 +4,6 @@ import { SwUpdate } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Observable, fromEvent, Subscription } from "rxjs";
 import { MessagingService } from "./services/messaging.service";
-import { HelperService } from "./services/helper.service";
 
 @Component({
   selector: "app-root",
@@ -26,24 +25,17 @@ export class AppComponent implements OnInit, OnDestroy {
     private swUpdate: SwUpdate,
     private snackBar: MatSnackBar,
     private messagingService: MessagingService,
-    private helper: HelperService,
     private ref: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.messagingService.receiveMessage();
-
-    // this.messages$$ = this.messagingService.receiveMessage$.subscribe(
-    //   (message) => {
-    //     console.log("message:", message);
-    //   }
-    // );
     this.messagingService.currentMessage.subscribe(
       (message) => {
         this.showMessage(message);
       },
       (error) => {
-        console.error("error:", error);
+        console.error("message subscribe error:", error);
       }
     );
 
@@ -93,51 +85,26 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Code to extract title and body fields from the message object. This
-   * is very convoluted but was only way I could reliable get to the title and
-   * body properties in the message object. Going directly with property index
-   * kept failing for some reason
+   * Code to extract title and body fields from the message object and display in the alert div.
    *
    * @param message the message object returned by a subscription to messaging
    */
-  // extractMessage(message: object): { title: string; body: string } | string | null {
   showMessage(message: object) {
-    let title: string = null;
-    let body: string = null;
-    let found = false;
-
-    // Make a copy of the message object to work on (May not need this)
-    const msgCopy = { ...message };
-    console.log("extractMessage:", JSON.stringify(msgCopy));
-
-    // Iterate the object to extract the properties (Only way that seemed to work)
-    // if (msgCopy && msgCopy != null) {
-    //   console.log("app 2", JSON.stringify(msgCopy).trim());
-    //   for (var prop in msgCopy) {
-    //     console.log("app 3", prop, msgCopy[prop]);
-    //     if (prop == "notification") {
-    //       const notification = msgCopy[prop];
-    //       console.log("app 4", notification);
-    //       for (var note in notification) {
-    //         console.log("app 5", "." + note + ".", notification[note]);
-    //         if (note == "title") {
-    //           title = notification[note];
-    //         }
-    //         if (note == "body") {
-    //           body = notification[note];
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
     if (message && message != null) {
       try {
         this.msgTitle = message["notification"]["title"];
         this.msgBody = message["notification"]["body"];
         this.showAlert = true;
+        // The change detection is very spooky with messages, it took forever
+        // to get this working and requires a manual detectChanges .
         this.ref.detectChanges();
       } catch (e) {
-        console.error("error: ", e);
+        console.error(
+          "Message display error: ",
+          e,
+          " message: ",
+          JSON.stringify(message)
+        );
       }
     }
   }
