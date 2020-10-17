@@ -57,6 +57,7 @@ import { TriggerslistComponent } from "./shared/triggerslist/triggerslist.compon
 import { UserselectordialogComponent } from "./dialogs/userselectordialog/userselectordialog.component";
 import { ViewComponent } from "./view/view.component";
 import { ViewslistComponent } from "./shared/viewslist/viewslist.component";
+import { ConfirmdialogComponent } from './dialogs/confirmdialog/confirmdialog.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { ViewslistComponent } from "./shared/viewslist/viewslist.component";
     UserselectordialogComponent,
     ViewComponent,
     ViewslistComponent,
+    ConfirmdialogComponent,
   ],
   imports: [
     BrowserModule,

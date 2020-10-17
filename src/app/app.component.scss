@@ -33,9 +33,14 @@
 }
 
 @media print {
-
   .no-print,
   .no-print * {
     display: none !important;
   }
+}
+
+.alert {
+  padding: 20px;
+  background-color: rgb(207, 137, 7);
+  color: white;
 }
