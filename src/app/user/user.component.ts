@@ -29,14 +29,14 @@ export class UserComponent implements OnInit, OnDestroy {
   fileUploadMsg = "";
 
   token: string;
+  hasToken = false;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private auth: AuthService,
+    public auth: AuthService,
     private storage: AngularFireStorage,
     private helper: HelperService,
-    private dialog: MatDialog,
     private messagingService: MessagingService // private angularFireMessaging: AngularFireMessaging
   ) {}
 
@@ -56,9 +56,13 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     this.user$ = this.userService.findUserByUid(this.uid);
-    this.userSubscription$$ = this.user$.subscribe(
-      (user) => (this.user = user)
-    );
+    this.userSubscription$$ = this.user$.subscribe((user) => {
+      this.user = user;
+      this.hasToken = false;
+      if (user.deviceMessagingToken && user.deviceMessagingToken != "") {
+        this.hasToken = true;
+      }
+    });
     // Track the messaging token state
     // this.tokenSubscription$$ = this.angularFireMessaging.tokenChanges.subscribe(
     //   (token) => {

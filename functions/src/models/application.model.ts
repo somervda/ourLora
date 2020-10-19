@@ -4,4 +4,5 @@ export interface Application {
   name: string;
   description: string;
   deviceRefs: admin.firestore.DocumentReference[];
+  userRefs: admin.firestore.DocumentReference[];
 }

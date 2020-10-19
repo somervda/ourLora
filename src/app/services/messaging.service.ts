@@ -11,8 +11,7 @@ export class MessagingService {
   currentMessage = new BehaviorSubject(null);
   constructor(
     private angularFireMessaging: AngularFireMessaging,
-    private helper: HelperService,
-    userService: UserService
+    private userService: UserService
   ) {
     this.angularFireMessaging.messaging.subscribe((_messaging) => {
       _messaging.onMessage = _messaging.onMessage.bind(_messaging);
@@ -33,6 +32,7 @@ export class MessagingService {
     this.angularFireMessaging.requestToken.subscribe(
       (token) => {
         console.log("Permission granted! Save to the server!", token);
+        this.userService.dbFieldUpdate(user.uid, "deviceMessagingToken", token);
       },
       (error) => {
         console.error(error);
@@ -59,6 +59,7 @@ export class MessagingService {
       console.log("Token to delete:", token);
       this.angularFireMessaging.deleteToken(token).subscribe((result) => {
         console.log("Token deleted!", result);
+        this.userService.dbFieldUpdate(user.uid, "deviceMessagingToken", "");
       });
     });
   }

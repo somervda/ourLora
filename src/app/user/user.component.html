@@ -65,6 +65,7 @@
         matTooltip="Users must be activated before any access is provided to the system"
       ></mat-checkbox>
     </div>
+    <ng-container *ngIf="auth.currentUser.uid == uid">
     <div 
     class="prompt"
     [matTooltip]='"Note: For messaging, only one person can be associated with each device," + 
@@ -76,6 +77,7 @@
       <button
       mat-button-raised
       (click)="subscribeToMessaging()"
+      *ngIf = "!hasToken"
     >
       Subscribe
     </button> 
@@ -83,10 +85,12 @@
       mat-button-raised
       (click)="unsubscribeFromMessaging()"
       style="margin-left: 10px;"
+      *ngIf = "hasToken"
     >
       UnSubscribe
     </button> 
     </div>
+  </ng-container>
 
   </div>
 </div>
