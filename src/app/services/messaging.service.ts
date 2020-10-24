@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { AngularFireMessaging } from "@angular/fire/messaging";
 import { BehaviorSubject } from "rxjs";
 import { User } from "../models/user.model";
-import { HelperService } from "./helper.service";
 import { UserService } from "./user.service";
 @Injectable({
   providedIn: "root",

@@ -9,4 +9,4 @@ curl -X POST \
   https://fcm.googleapis.com/fcm/send \
   -H 'Authorization: key=AAAAFM2LRWE:APA91bELQ9FODKZhKyw193HiGtAjDTPGsvpjZvpBN0wyCXJr1mZZ9A9JEeSQqyiNBHAkbmHCM3oD-cWQDyrIx1uvqjj__ElvpteLfm_dqztEdFi6aDHCGBWZHfmxtvDq52vmeD4V5P8i' \
   -H 'Content-Type: application/json' \
-  -d '{"notification" : {"title" : "Alert from Mailbox","body" : "Mailbox was opened at 5:00"},"to":"fNFuAtzfs6kh3WwTkHXpnW:APA91bEPM9p9H_x0Nf758j66nK9cNU5shTS7qcMiHgoe5smYtFXRgdQgcLZHCaso14iJBWj5HkmLx859vUwpgejPAxwmIZwUXlSrXKJyn2JzZLy1udk1ybRNMK4FJ5Z1wtGKxx0ffV1w"}'
+  -d '{"notification" : {"title" : "Alert from Mailbox","body" : "Mailbox was opened at 5:00"},"to":"edrxMKbg1BT9Ln4lnTx9_I:APA91bGpLufaMgOvNIdxTF9oTdxetJJrevaAmFPBVyL-UOIQ6GRhZrc8X3l-xhUiH5ks1kv8GZWzoFuP2UAOAdS08x7-y8n3Ck_J48rt-yeE5Zl2sULyGUa9lAgQ8Auc-nTOsdbmJlAC"}'
