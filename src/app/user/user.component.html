@@ -65,32 +65,69 @@
         matTooltip="Users must be activated before any access is provided to the system"
       ></mat-checkbox>
     </div>
-    <ng-container *ngIf="auth.currentUser.uid == uid">
-    <div 
-    class="prompt"
-    [matTooltip]='"Note: For messaging, only one person can be associated with each device," + 
-    " any other users who receive messages on this device will be disassociated." + 
-    " Recommendation is to associate messaging with your primary mobile device like a phone"'
-    >Send messages to this device?
-      </div>
-    <div>
-      <button
-      mat-button-raised
-      (click)="subscribeToMessaging()"
-      *ngIf = "!hasToken"
-    >
-      Subscribe
-    </button> 
-      <button
-      mat-button-raised
-      (click)="unsubscribeFromMessaging()"
-      style="margin-left: 10px;"
-      *ngIf = "hasToken"
-    >
-      UnSubscribe
-    </button> 
-    </div>
-  </ng-container>
 
+    <!-- Can update notification settings if looking at own profile -->
+    <ng-container *ngIf="auth.currentUser.uid == uid">
+      <!-- Notifications (FCM) : Subscribe/Unsubscribe -->
+      <div
+        class="prompt"
+        [matTooltip]="
+          'Note: Recommendation is to associate messaging with your primary mobile device like a phone,' +
+          ' only one device can be assigned per user.'
+        "
+      >
+        Send messages to this device?
+      </div>
+      <div>
+        <button
+          mat-button-raised
+          (click)="subscribeToMessaging()"
+          *ngIf="!hasToken"
+        >
+          Subscribe
+        </button>
+        <button
+          mat-button-raised
+          (click)="unsubscribeFromMessaging()"
+          *ngIf="hasToken"
+        >
+          UnSubscribe
+        </button>
+      </div>
+
+      <!-- Enter sms phone number -->
+      <div
+        class="prompt"
+        matTooltip="Enter a phone number to receive SMS notifications. Must be E164 format with a leading + Country code (1 to 3 digits), Subscriber number (max 12 digits) i.e. +16101234567"
+      >
+        SMS Phone Number
+      </div>
+
+      <div>
+        <input
+          matInput
+          placeholder="+16101234567"
+          #e164
+          [ngModel]="(user$ | async)?.smsPhoneE164"
+          (keyup)="onSmsPhoneE164Change(e164.value)"
+        />
+        <div *ngIf="!isE164(e164.value)" style="color: red">
+          Error: Invalid E164 phone number
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Can not update notification settings for other users, but can view them -->
+    <ng-container *ngIf="auth.currentUser.uid != uid">
+      <div class="prompt">Send messages to this device?</div>
+      <div>
+        {{ hasToken ? "Yes" : "No" }}
+      </div>
+      <div class="prompt">SMS Phone Number</div>
+
+      <div>
+        {{ (user$ | async)?.smsPhoneE164 }}
+      </div>
+    </ng-container>
   </div>
 </div>

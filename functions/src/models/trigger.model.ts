@@ -21,6 +21,7 @@ export enum TriggerAction {
   "Notification" = 1,
   "eMail" = 2,
   "Log" = 3,
+  "SMS" = 4,
 }
 
 export interface TriggerActionInfoItem {
@@ -32,17 +33,22 @@ export interface TriggerActionInfoItem {
 export const TriggerActionInfo: TriggerActionInfoItem[] = [
   {
     value: 1,
-    name: "User Notification",
+    name: "Send a User Notification",
     nameShort: "Notification",
   },
   {
     value: 2,
-    name: "User EMail",
-    nameShort: "email",
+    name: "Send a User EMail",
+    nameShort: "EMail",
   },
   {
     value: 3,
-    name: "Log Entry",
+    name: "Create a Log Entry",
     nameShort: "Log",
+  },
+  {
+    value: 4,
+    name: "Send a SMS notification",
+    nameShort: "SMS",
   },
 ];

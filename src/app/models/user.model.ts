@@ -16,4 +16,5 @@ export interface User {
   // The Firebase Cloud Messaging (FCM) tokens registered for device
   // Note: Only one user can be associated with a certain device
   deviceMessagingToken?: string;
+  smsPhoneE164?: string;
 }

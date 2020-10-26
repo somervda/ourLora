@@ -127,6 +127,20 @@ export class UserComponent implements OnInit, OnDestroy {
     this.messagingService.requestPermissionAndToken(this.user);
   }
 
+  isE164(e164: string): boolean {
+    if (e164 == "") {
+      return true;
+    }
+    return /^\+\d{11,14}$/.test(e164);
+  }
+
+  onSmsPhoneE164Change(value: string) {
+    console.log("onSmsPhoneE164Change", value);
+    if (this.isE164(value)) {
+      this.userService.dbFieldUpdate(this.uid, "smsPhoneE164", value);
+    }
+  }
+
   unsubscribeFromMessaging() {
     console.log("unsubscribeFromMessaging");
     this.messagingService.deleteToken(this.user);

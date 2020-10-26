@@ -333,18 +333,18 @@ function getBodyField(body: any, fieldName: string) {
     case 1:
       return body[fieldNameParts[0]];
     case 2:
-      if (typeof body[fieldNameParts[0]] == "undefined") {
+      if (typeof body[fieldNameParts[0]] === "undefined") {
         console.log("Undefined: ", fieldName);
         return undefined;
       } else {
         return body[fieldNameParts[0]][fieldNameParts[1]];
       }
     case 3:
-      if (typeof body[fieldNameParts[0]] == "undefined") {
+      if (typeof body[fieldNameParts[0]] === "undefined") {
         console.log("Undefined: ", fieldName);
         return undefined;
       } else {
-        if (typeof body[fieldNameParts[0]][fieldNameParts[1]] == "undefined") {
+        if (typeof body[fieldNameParts[0]][fieldNameParts[1]] === "undefined") {
           console.log("Undefined: ", fieldName);
           return undefined;
         } else {

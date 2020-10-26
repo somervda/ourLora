@@ -5,6 +5,8 @@ import { Trigger, TriggerAction } from "./models/trigger.model";
 import { Triggerlog } from "./models/triggerlog.model";
 import { User } from "./models/user.model";
 import * as admin from "firebase-admin";
+import * as twilio from "twilio";
+// const twilio = require("twilio");
 
 export const eventTrigger = function (event: Event) {
   console.log("eventTrigger", JSON.stringify(event));
@@ -59,6 +61,10 @@ function processApplicationSensorTrigger(
             case TriggerAction.Notification:
               // Send a notification to each application user
               sendNotifications(trigger, event, application);
+              break;
+            case TriggerAction.SMS:
+              // Send a notification to each application user
+              sendSMSs(trigger, event, application);
               break;
           }
         }
@@ -127,5 +133,63 @@ function sendNotification(trigger: Trigger, event: Event, user: User) {
       .sendToDevice(user.deviceMessagingToken, payload)
       .then(() => console.log("Successful message"))
       .catch((e) => console.error("Send message failed:", e));
+  }
+}
+
+function sendSMSs(trigger: Trigger, event: Event, application: Application) {
+  // Get twilio connection info from keys
+  const keyRef = <FirebaseFirestore.DocumentReference>(
+    db.doc("/keys/4dtW9oXeH6rqrH5tcHqr")
+  );
+  keyRef
+    .get()
+    .then((keySnap) => {
+      const twilioKeyDoc = keySnap.data();
+      if (twilioKeyDoc) {
+        const twilioPhone = twilioKeyDoc["twilioPhone"];
+        const twilioSID = twilioKeyDoc["twilioSID"];
+        const twilioAuthToken = twilioKeyDoc["twilioAuthToken"];
+        const client = twilio(twilioSID, twilioAuthToken);
+
+        application.userRefs.forEach((userRef) => {
+          userRef
+            .get()
+            .then((userSnap) => {
+              const user = <User>userSnap.data();
+              sendSMS(twilioPhone, client, trigger, event, user);
+            })
+            .catch();
+        });
+      }
+    })
+    .catch((e) => console.error("Twilio key reprieval error", e));
+}
+
+function sendSMS(
+  fromPhone: string,
+  client: twilio.Twilio,
+  trigger: Trigger,
+  event: Event,
+  user: User
+) {
+  console.log(
+    "sendSMS user:",
+    JSON.stringify(user),
+    "  trigger:",
+    JSON.stringify(trigger),
+    "  fromPhone:",
+    fromPhone
+  );
+  if (user.smsPhoneE164 && user.smsPhoneE164.trim() != "") {
+    client.messages
+      .create({
+        body: trigger.message,
+        from: fromPhone,
+        to: user.smsPhoneE164,
+      })
+      .then((message) =>
+        console.log("Message sent:", JSON.stringify(message.sid))
+      )
+      .catch((e) => console.error("SMS send error:", e));
   }
 }
