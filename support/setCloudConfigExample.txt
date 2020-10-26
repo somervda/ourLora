@@ -1,0 +1,5 @@
+firebase functions:config:set twilio.phone="+1415123456" twilio.sid="Example SID" twilio.authtoken="Example AuthToken"
+
+firebase functions:config:set email.user="user@gmail.com"  email.password="password"
+
+firebase functions:config:get

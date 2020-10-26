@@ -6,7 +6,8 @@ import { Triggerlog } from "./models/triggerlog.model";
 import { User } from "./models/user.model";
 import * as admin from "firebase-admin";
 import * as twilio from "twilio";
-// const twilio = require("twilio");
+import * as functions from "firebase-functions";
+import * as nodemailer from "nodemailer";
 
 export const eventTrigger = function (event: Event) {
   console.log("eventTrigger", JSON.stringify(event));
@@ -15,26 +16,23 @@ export const eventTrigger = function (event: Event) {
       .then((a) => {
         const application: Application = <Application>{ id: a.id, ...a.data() };
         console.log("appRef:", JSON.stringify(application));
-        processApplicationSensorTrigger(event, application);
+        processTriggers(event, application);
       })
       .catch();
   });
 };
 
-function processApplicationSensorTrigger(
-  event: Event,
-  application: Application
-) {
+function processTriggers(event: Event, application: Application) {
   const triggerCollectionPath = `applications/${application.id}/triggers`;
   const triggerCollectionRef = <FirebaseFirestore.CollectionReference>(
     db.collection(triggerCollectionPath)
   );
-  console.log(
-    "triggerCollectionRef:",
-    triggerCollectionPath,
-    " ref:",
-    JSON.stringify(triggerCollectionRef)
-  );
+  // console.log(
+  //   "triggerCollectionRef:",
+  //   triggerCollectionPath,
+  //   " ref:",
+  //   JSON.stringify(triggerCollectionRef)
+  // );
   triggerCollectionRef
     .where("sensorRef", "==", event.sensorRef)
     .where("active", "==", true)
@@ -52,27 +50,53 @@ function processApplicationSensorTrigger(
           event.value >= trigger.triggerRangeMin &&
           event.value <= trigger.triggerRangeMax
         ) {
-          // Process the trigger action, note a log is always done
-          writeTriggerLog(event, application, trigger);
-          switch (trigger.triggerAction) {
-            case TriggerAction.eMail:
-              // send an email to the application users
-              break;
-            case TriggerAction.Notification:
-              // Send a notification to each application user
-              sendNotifications(trigger, event, application);
-              break;
-            case TriggerAction.SMS:
-              // Send a notification to each application user
-              sendSMSs(trigger, event, application);
-              break;
-          }
+          processTrigger(event, application, trigger);
         }
       });
     })
     .catch();
 }
 
+function processTrigger(
+  event: Event,
+  application: Application,
+  trigger: Trigger
+) {
+  // Process the trigger action, note a log is always done
+  writeTriggerLog(event, application, trigger);
+
+  //  The following actions are performed for each application user
+  application.userRefs.forEach((userRef) => {
+    userRef
+      .get()
+      .then((userSnap) => {
+        const user = <User>userSnap.data();
+        //  Perform trigger action
+        switch (trigger.triggerAction) {
+          case TriggerAction.eMail:
+            // send an email to the application users
+            sendEmail(trigger, event, user);
+            break;
+          case TriggerAction.Notification:
+            // Send a notification to each application user
+            sendNotification(trigger, event, user);
+            break;
+          case TriggerAction.SMS:
+            // Send a notification to each application user
+            sendSMS(trigger, event, user);
+            break;
+        }
+      })
+      .catch();
+  });
+}
+
+/**
+ * Write an entry to trigger log everytime a trigger is fired
+ * @param event IOT event details
+ * @param application Application in scope for the event
+ * @param trigger Trigger that applies for the event/application
+ */
 function writeTriggerLog(
   event: Event,
   application: Application,
@@ -92,32 +116,10 @@ function writeTriggerLog(
 }
 
 /**
- * Send a FCM notification to each user in the application
- * @param trigger
- * @param event
- * @param application
- */
-function sendNotifications(
-  trigger: Trigger,
-  event: Event,
-  application: Application
-) {
-  application.userRefs.forEach((userRef) => {
-    userRef
-      .get()
-      .then((userSnap) => {
-        const user = <User>userSnap.data();
-        sendNotification(trigger, event, user);
-      })
-      .catch();
-  });
-}
-
-/**
  * Send a FCM notification to a specific user
- * @param trigger
- * @param event
- * @param user
+ * @param trigger Trigger that invoked this action
+ * @param event IOT event document
+ * @param user User receiving this notification
  */
 function sendNotification(trigger: Trigger, event: Event, user: User) {
   // console.log("sendNotification user:", JSON.stringify(user));
@@ -136,55 +138,31 @@ function sendNotification(trigger: Trigger, event: Event, user: User) {
   }
 }
 
-function sendSMSs(trigger: Trigger, event: Event, application: Application) {
-  // Get twilio connection info from keys
-  const keyRef = <FirebaseFirestore.DocumentReference>(
-    db.doc("/keys/4dtW9oXeH6rqrH5tcHqr")
-  );
-  keyRef
-    .get()
-    .then((keySnap) => {
-      const twilioKeyDoc = keySnap.data();
-      if (twilioKeyDoc) {
-        const twilioPhone = twilioKeyDoc["twilioPhone"];
-        const twilioSID = twilioKeyDoc["twilioSID"];
-        const twilioAuthToken = twilioKeyDoc["twilioAuthToken"];
-        const client = twilio(twilioSID, twilioAuthToken);
-
-        application.userRefs.forEach((userRef) => {
-          userRef
-            .get()
-            .then((userSnap) => {
-              const user = <User>userSnap.data();
-              sendSMS(twilioPhone, client, trigger, event, user);
-            })
-            .catch();
-        });
-      }
-    })
-    .catch((e) => console.error("Twilio key reprieval error", e));
-}
-
-function sendSMS(
-  fromPhone: string,
-  client: twilio.Twilio,
-  trigger: Trigger,
-  event: Event,
-  user: User
-) {
+/**
+ * Send a SMS to a user via the twilio service
+ * @param trigger The trigger that invoked this action
+ * @param event The IOT event document
+ * @param user The user who should receive this SMS
+ */
+function sendSMS(trigger: Trigger, event: Event, user: User) {
   console.log(
     "sendSMS user:",
     JSON.stringify(user),
     "  trigger:",
-    JSON.stringify(trigger),
-    "  fromPhone:",
-    fromPhone
+    JSON.stringify(trigger)
   );
-  if (user.smsPhoneE164 && user.smsPhoneE164.trim() != "") {
-    client.messages
+  if (user.smsPhoneE164 && user.smsPhoneE164.trim() !== "") {
+    // Get twilio connection info from cloud function environment settings
+    const twilioPhone = functions.config().twilio.phone;
+    const twilioSID = functions.config().twilio.sid;
+    const twilioAuthToken = functions.config().twilio.authtoken;
+    const twilioClient = twilio(twilioSID, twilioAuthToken, {
+      lazyLoading: true,
+    });
+    twilioClient.messages
       .create({
         body: trigger.message,
-        from: fromPhone,
+        from: twilioPhone,
         to: user.smsPhoneE164,
       })
       .then((message) =>
@@ -192,4 +170,46 @@ function sendSMS(
       )
       .catch((e) => console.error("SMS send error:", e));
   }
+}
+
+/**
+ * Send a email to a user via the nodemail service
+ * @param trigger The trigger that invoked this action
+ * @param event The IOT event document
+ * @param user The user who should receive this SMS
+ */
+function sendEmail(trigger: Trigger, event: Event, user: User) {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: functions.config().email.user,
+      pass: functions.config().email.password,
+    },
+  });
+
+  console.log(
+    "sendEmail   functions.config().email.user: ",
+    functions.config().email.user,
+    "functions.config().email.password",
+    functions.config().email.password,
+    "   user:",
+    user.email
+  );
+
+  const mailOptions = {
+    from: "ourLora <olupincorp@gmail.com>",
+    to: user.email,
+    subject: trigger.name, // email subject
+    html: `<p style="font-size: 16px;">${trigger.message}</p>`, // email content in HTML
+  };
+
+  // Do the send
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(`error: ${JSON.stringify(error)}`);
+    }
+    if (info) {
+      console.log(`Message Sent ${JSON.stringify(info.response)}`);
+    }
+  });
 }
