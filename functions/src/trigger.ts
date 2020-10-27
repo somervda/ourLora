@@ -179,7 +179,7 @@ function sendSMS(trigger: Trigger, event: Event, user: User) {
  * @param user The user who should receive this SMS
  */
 function sendEmail(trigger: Trigger, event: Event, user: User) {
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: functions.config().email.user,
