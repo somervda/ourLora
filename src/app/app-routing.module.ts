@@ -24,6 +24,8 @@ import { ApplicationResolver } from "./services/application-resolver";
 import { TriggerResolver } from "./services/trigger-resolver";
 import { ViewComponent } from "./view/view.component";
 import { ViewResolver } from "./services/view-resolver";
+import { MyviewsComponent } from "./myviews/myviews.component";
+import { MyviewerComponent } from "./myviewer/myviewer.component";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -117,6 +119,21 @@ const routes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: ["isAdmin"] },
     runGuardsAndResolvers: "always",
+  },
+  //  My Views
+  {
+    path: "myviews",
+    component: MyviewsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isActivated"] },
+  },
+  //  My Viewer
+  {
+    path: "application/:aid/myviewer/:vid",
+    resolve: { view: ViewResolver },
+    component: MyviewerComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: ["isActivated"] },
   },
   //  Sensor
   {

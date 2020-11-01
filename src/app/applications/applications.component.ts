@@ -18,6 +18,9 @@ export class ApplicationsComponent implements OnInit {
     private auth: AuthService
   ) {}
   ngOnInit() {
-    this.applications$ = this.applicationService.findAll(100);
+    this.applications$ = this.applicationService.findByUid(
+      this.auth.currentUser.uid,
+      100
+    );
   }
 }

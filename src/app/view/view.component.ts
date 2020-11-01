@@ -211,7 +211,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   getSensorRef(id: string) {
-    return this.helper.docRef("devidetypes/" + this.dtid + "/sensors/" + id);
+    return this.helper.docRef("devicetypes/" + this.dtid + "/sensors/" + id);
   }
 
   ngOnDestroy() {

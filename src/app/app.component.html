@@ -4,24 +4,29 @@
     <mat-nav-list>
       <a mat-list-item routerLink="/">
         <mat-icon>home</mat-icon>
-        <span id="mainMenuHome">Home</span>
+        <span id="mainMenuHome">&nbsp;Home</span>
       </a>
       <a mat-list-item routerLink="about">
         <mat-icon>question_answer</mat-icon>
-        <span id="mainMenuAbout">About</span>
+        <span id="mainMenuAbout">&nbsp;About</span>
       </a>
 
       <!-- Logged in and activated options -->
       <span
         *ngIf="(auth.loggedIn$ | async) && (auth.user$ | async)?.isActivated"
       >
+        <a mat-list-item routerLink="myviews">
+          <mat-icon>table_chart</mat-icon>
+          <span id="mainMyviews">&nbsp;My Views</span>
+        </a>
+
         <!-- User functions , if we have too many then add a navigation page  -->
         <a
           mat-list-item
           [routerLink]="['myprofile/', (auth.user$ | async)?.uid || '']"
         >
           <mat-icon>person</mat-icon>
-          <span id="mainMenuMyProfile">My Profile</span>
+          <span id="mainMenuMyProfile">&nbsp;My Profile</span>
         </a>
 
         <!-- User Management -->
@@ -75,7 +80,7 @@
           *ngIf="auth.loggedIn$ | async"
         >
           <mat-icon>exit_to_app</mat-icon>
-          <span id="mainMenuLogout">Logout</span>
+          <span id="mainMenuLogout">&nbsp;Logout</span>
         </a>
       </span>
 
@@ -84,7 +89,7 @@
         <mat-divider></mat-divider>
         <a mat-list-item routerLink="login">
           <mat-icon>account_circle</mat-icon>
-          <span id="mainMenuLogin">Login</span>
+          <span id="mainMenuLogin">&nbsp;Login</span>
         </a>
       </span>
     </mat-nav-list>
@@ -128,16 +133,17 @@
       />
     </ng-container>
   </mat-toolbar>
- 
+
   <div class="alert" *ngIf="showAlert">
     <button
-    mat-raised-button
-    style="float: right; margin-bottom: 10px"
-    (click)="hideAlert()"
-  >
-    <span>Close</span>
-  </button>
-        <strong>{{msgTitle}}</strong><br />{{msgBody}}
+      mat-raised-button
+      style="float: right; margin-bottom: 10px"
+      (click)="hideAlert()"
+    >
+      <span>Close</span>
+    </button>
+    <strong>{{ msgTitle }}</strong
+    ><br />{{ msgBody }}
   </div>
 
   <router-outlet></router-outlet>
