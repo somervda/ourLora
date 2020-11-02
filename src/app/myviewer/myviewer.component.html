@@ -52,5 +52,17 @@
   </ng-container>
   <ng-container *ngIf="view.viewType == ViewType.scatter">
     scatter
+
+    <google-chart
+      #chart
+      [title]="gctitle"
+      [type]="gctype"
+      [data]="gcdata"
+      [columnNames]="gccolumnNames"
+      [options]="gcoptions"
+      dynamicResize="true"
+      class="gcchart"
+    >
+    </google-chart>
   </ng-container>
 </div>

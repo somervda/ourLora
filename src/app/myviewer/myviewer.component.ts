@@ -42,6 +42,22 @@ export class MyviewerComponent implements OnInit, OnDestroy {
     domain: ["#5AA454", "#E44D25", "#CFC0BB", "#7aa3e5", "#a8385d", "#aae3f5"],
   };
 
+  // Google charts definition
+  gctitle = "Temprature";
+  gctype = "ScatterChart";
+  // gcdata = [
+  //   [8, 12],
+  //   [4, 5.5],
+  //   [11, 14],
+  //   [4, 5],
+  //   [3, 3.5],
+  //   [6.5, 7],
+  // ];
+  gccolumnNames = ["Timestamp", "Temperature"];
+  gcoptions = {};
+
+  gcdata: [Date, number][] = [];
+
   constructor(
     private route: ActivatedRoute,
     private eventService: EventService,
@@ -79,6 +95,18 @@ export class MyviewerComponent implements OnInit, OnDestroy {
         });
         this.showChart = true;
       });
+    }
+
+    if (this.view.viewType == ViewType.scatter) {
+      this.events$$ = await this.events$.subscribe(async (es) => {
+        await es.map(async (e) => {
+          this.gcdata.push([
+            (<firebase.firestore.Timestamp>e.timestamp).toDate(),
+            e.value,
+          ]);
+        });
+      });
+      console.log("gcdata", this.gcdata);
     }
   }
 

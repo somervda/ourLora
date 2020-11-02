@@ -62,6 +62,7 @@ import { MyviewsComponent } from "./myviews/myviews.component";
 import { MyviewerComponent } from "./myviewer/myviewer.component";
 
 import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { GoogleChartsModule } from "angular-google-charts";
 
 @NgModule({
   declarations: [
@@ -131,6 +132,7 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
     ReactiveFormsModule,
     NgbCarouselModule,
     NgxChartsModule,
+    GoogleChartsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirePerformanceModule,
     AngularFireAuthModule,
