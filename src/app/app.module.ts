@@ -61,6 +61,8 @@ import { ConfirmdialogComponent } from "./dialogs/confirmdialog/confirmdialog.co
 import { MyviewsComponent } from "./myviews/myviews.component";
 import { MyviewerComponent } from "./myviewer/myviewer.component";
 
+import { NgxChartsModule } from "@swimlane/ngx-charts";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -128,6 +130,7 @@ import { MyviewerComponent } from "./myviewer/myviewer.component";
     AppRoutingModule,
     ReactiveFormsModule,
     NgbCarouselModule,
+    NgxChartsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirePerformanceModule,
     AngularFireAuthModule,

@@ -3,7 +3,7 @@ import { IotDataSource } from "./device.model";
 import { UOM } from "./sensor.model";
 export interface Event {
   id?: string;
-  timestamp: Date | firebase.firestore.FieldValue;
+  timestamp: firebase.firestore.Timestamp | firebase.firestore.FieldValue;
   location: firebase.firestore.GeoPoint;
   geohash: string;
   sensorRef: DocumentReference;
