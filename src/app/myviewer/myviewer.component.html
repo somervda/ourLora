@@ -10,53 +10,18 @@
   ]"
 ></app-subheading>
 <div class="page-container">
-  <button mat-button (click)="onShow()">OK</button>{{showChart}}
-  <ng-container *ngIf="view.viewType == ViewType.table">
-    <table mat-table [dataSource]="events$ | async" class="mat-elevation-z8">
-      <ng-container matColumnDef="timestamp" sticky>
-        <th mat-header-cell *matHeaderCellDef>Time</th>
-        <td mat-cell *matCellDef="let event">
-          {{ event.timestamp.toDate().toLocaleString() }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="value">
-        <th mat-header-cell *matHeaderCellDef>Value</th>
-        <td mat-cell *matCellDef="let event">
-          {{ event.value }}
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-  </ng-container>
-  <ng-container *ngIf="view.viewType == ViewType.line">
-    <div class="chart-holder">
-      <ngx-charts-line-chart
-        *ngIf="showChart"
-        [scheme]="colorScheme"
-        [legend]="legend"
-        [showXAxisLabel]="showXAxisLabel"
-        [showYAxisLabel]="showYAxisLabel"
-        [xAxis]="xAxis"
-        [yAxis]="yAxis"
-        [xAxisLabel]="xAxisLabel"
-        [yAxisLabel]="yAxisLabel"
-        [timeline]="timeline"
-        [results]="chartData"
-        [autoScale]="autoScale"
-        #mychart
-      >
-      </ngx-charts-line-chart>
-    </div>
-  </ng-container>
-  <ng-container *ngIf="view.viewType == ViewType.scatter ">
+  <ng-container
+    *ngIf="
+      view.viewType == ViewType.line ||
+      view.viewType == ViewType.scatter ||
+      view.viewType == ViewType.table
+    "
+  >
     <google-chart
       *ngIf="showChart"
       #chart
       [type]="gctype"
-      [data]="gcdata"
+      [data]="gcData"
       [columns]="gccolumns"
       [options]="gcoptions"
       dynamicResize="true"

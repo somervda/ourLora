@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Observable, Subject, Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { Event } from "../models/event.model";
 import { View, ViewType } from "../models/view.model";
 import { DeviceService } from "../services/device.service";
@@ -43,7 +43,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   };
 
   // Google charts definition
-  gctype = "ScatterChart";
+  gctype = "";
   // gcdata = [
   //   [8, 12],
   //   [4, 5.5],
@@ -52,10 +52,9 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   //   [3, 3.5],
   //   [6.5, 7],
   // ];
-  gccolumns = ["Date","Temp"];
+  gccolumns: string[] = [];
   gcoptions = {};
-
-  gcdata: [Date, number][] = [];
+  gcData = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -81,46 +80,75 @@ export class MyviewerComponent implements OnInit, OnDestroy {
       ds.forEach((d) => this.devices.push({ id: d.id, name: d.name }));
     });
 
-    if (this.view.viewType == ViewType.line) {
-      this.events$$ = await this.events$.subscribe(async (es) => {
-        await es.map(async (e) => {
-          const deviceName = this.devices.find((d) => d.id == e.deviceRef.id)
-            ?.name;
-          this.updateChartData(
-            <firebase.firestore.Timestamp>e.timestamp,
-            e.value,
-            deviceName
-          );
-        });
-        this.showChart = true;
-      });
-    }
+    // Build chart data
+    let rawData: { timestamp: Date; deviceName: string; value: number }[] = [];
+    let series: string[] = [];
+    this.events$$ = await this.events$.subscribe(async (es) => {
+      await es.map(async (e) => {
+        console.log("1");
+        const deviceName = this.devices.find((d) => d.id == e.deviceRef.id)
+          ?.name;
+        if (!series.includes(deviceName)) {
+          series.push(deviceName);
+        }
+        switch (this.view.viewType) {
+          case ViewType.scatter: {
+            this.gctype = "ScatterChart";
+            break;
+          }
 
-    if (this.view.viewType == ViewType.scatter) {
-      this.events$$ = await this.events$.subscribe(async (es) => {
-        console.log("4");
-        await es.map(async (e) => {
-          // this.gcdata.push([
-          //   new Date(),
-          //   e.value,
-          // ]);
-          console.log("1");
-          this.gcdata.push([
-            (<firebase.firestore.Timestamp>e.timestamp).toDate(),
-            e.value,
-          ]);
+          case ViewType.line: {
+            this.gctype = "LineChart";
+            break;
+          }
+          case ViewType.table: {
+            this.gctype = "Table";
+
+            break;
+          }
+        }
+        rawData.push({
+          timestamp: (<firebase.firestore.Timestamp>e.timestamp).toDate(),
+          deviceName: deviceName,
+          value: e.value,
         });
       });
+      this.buildChartData(series, rawData);
+
       console.log("2");
-      console.log("gcdata", this.gcdata);
-      this.onShow();
-      // this.showChart=true;
-    }
+      this.showChart = true;
+    });
   }
 
-  onShow() {
-    console.log("3");
-    this.showChart=true;
+  buildChartData(
+    series: string[],
+    rawData: { timestamp: Date; deviceName: string; value: number }[]
+  ) {
+    console.log("*** buildChartData series:", series, " rawData:", rawData);
+    rawData.sort((a, b) => a.deviceName.localeCompare(b.deviceName));
+    // Create the chartColumns and chartData arrays
+    this.gccolumns.push("Date");
+    series.forEach((s) => {
+      // For each series add a column name and any data for the series
+      // missing column data is represented by a null
+      this.gccolumns.push(s);
+    });
+    rawData.forEach((d) => {
+      console.log("Next Row");
+      let row: any[] = [];
+      row.push(d.timestamp);
+      series.forEach((s1) => {
+        console.log("s1:", s1, " d.deviceName:", d.deviceName);
+        if (s1 == d.deviceName) {
+          row.push(d.value);
+        } else {
+          row.push(null);
+        }
+      });
+      console.log("row:", row);
+      this.gcData.push(row);
+    });
+    console.log("buildChartData:", this.gcData, " gccolumns:", this.gccolumns);
   }
 
   updateChartData(
