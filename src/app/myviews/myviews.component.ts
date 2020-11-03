@@ -44,6 +44,7 @@ export class MyviewsComponent implements OnInit, OnDestroy {
       100
     );
 
+    this.appViewTree = [];
     this.applications$.subscribe((applications) => {
       applications.map((application) => {
         this.views$$ = this.viewService

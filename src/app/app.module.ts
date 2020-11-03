@@ -61,7 +61,6 @@ import { ConfirmdialogComponent } from "./dialogs/confirmdialog/confirmdialog.co
 import { MyviewsComponent } from "./myviews/myviews.component";
 import { MyviewerComponent } from "./myviewer/myviewer.component";
 
-import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { GoogleChartsModule } from "angular-google-charts";
 
 @NgModule({
@@ -131,7 +130,6 @@ import { GoogleChartsModule } from "angular-google-charts";
     AppRoutingModule,
     ReactiveFormsModule,
     NgbCarouselModule,
-    NgxChartsModule,
     GoogleChartsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirePerformanceModule,
