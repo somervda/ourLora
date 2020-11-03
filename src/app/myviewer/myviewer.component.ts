@@ -43,7 +43,6 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   };
 
   // Google charts definition
-  gctitle = "Temprature";
   gctype = "ScatterChart";
   // gcdata = [
   //   [8, 12],
@@ -53,7 +52,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   //   [3, 3.5],
   //   [6.5, 7],
   // ];
-  gccolumnNames = ["Timestamp", "Temperature"];
+  gccolumns = ["Date","Temp"];
   gcoptions = {};
 
   gcdata: [Date, number][] = [];
@@ -99,15 +98,29 @@ export class MyviewerComponent implements OnInit, OnDestroy {
 
     if (this.view.viewType == ViewType.scatter) {
       this.events$$ = await this.events$.subscribe(async (es) => {
+        console.log("4");
         await es.map(async (e) => {
+          // this.gcdata.push([
+          //   new Date(),
+          //   e.value,
+          // ]);
+          console.log("1");
           this.gcdata.push([
             (<firebase.firestore.Timestamp>e.timestamp).toDate(),
             e.value,
           ]);
         });
       });
+      console.log("2");
       console.log("gcdata", this.gcdata);
+      this.onShow();
+      // this.showChart=true;
     }
+  }
+
+  onShow() {
+    console.log("3");
+    this.showChart=true;
   }
 
   updateChartData(
