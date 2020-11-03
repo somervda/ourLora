@@ -5,7 +5,6 @@ import { ApplicationService } from "../services/application.service";
 import { AuthService } from "../services/auth.service";
 import { ViewService } from "../services/view.service";
 import { View } from "../models/view.model";
-import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 
 @Component({
   selector: "app-myviews",
@@ -14,6 +13,7 @@ import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 })
 export class MyviewsComponent implements OnInit, OnDestroy {
   applications$: Observable<Application[]>;
+  applications$$: Subscription;
   views$$: Subscription;
   appViewTree: {
     appId: string;
@@ -45,7 +45,7 @@ export class MyviewsComponent implements OnInit, OnDestroy {
     );
 
     this.appViewTree = [];
-    this.applications$.subscribe((applications) => {
+    this.applications$$ = this.applications$.subscribe((applications) => {
       applications.map((application) => {
         this.views$$ = this.viewService
           .findAll(application.id, 100)
@@ -71,11 +71,11 @@ export class MyviewsComponent implements OnInit, OnDestroy {
   }
 
   getViews(aid: string): Observable<View[]> {
-    console.log("getView:", aid);
     return this.viewService.findAll(aid, 100);
   }
 
   ngOnDestroy() {
     if (this.views$$) this.views$$.unsubscribe();
+    if (this.applications$$) this.applications$$.unsubscribe();
   }
 }

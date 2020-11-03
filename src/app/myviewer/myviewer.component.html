@@ -10,23 +10,18 @@
   ]"
 ></app-subheading>
 <div class="page-container">
-  <ng-container
-    *ngIf="
-      view.viewType == ViewType.line ||
-      view.viewType == ViewType.scatter ||
-      view.viewType == ViewType.table
-    "
-  >
+  <mat-card style="min-width: 380px; margin-bottom: 10px">
     <google-chart
       *ngIf="showChart"
       #chart
-      [type]="gctype"
-      [data]="gcData"
-      [columns]="gccolumns"
-      [options]="gcoptions"
+      [type]="chartType"
+      [data]="chartData"
+      [columns]="chartColumns"
+      [options]="chartOptions"
       dynamicResize="true"
-      class="gcchart"
+      class="googleChart"
     >
     </google-chart>
-  </ng-container>
+  </mat-card>
+  {{ view.description }}
 </div>
