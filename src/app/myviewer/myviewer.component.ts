@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Observable, Subscription } from "rxjs";
 import { Event } from "../models/event.model";
-import { View, ViewType } from "../models/view.model";
+import { View, ViewType, ViewTypeInfo } from "../models/view.model";
 import { DeviceService } from "../services/device.service";
 import { EventService } from "../services/event.service";
 import { HelperService } from "../services/helper.service";
@@ -15,6 +15,9 @@ import { HelperService } from "../services/helper.service";
 export class MyviewerComponent implements OnInit, OnDestroy {
   devices: { id: string; name: string }[] = [];
   ViewType = ViewType;
+  viewType: ViewType;
+  maxRows: number = 25;
+  ViewTypeInfo = ViewTypeInfo;
   events$: Observable<Event[]>;
   events$$: Subscription;
   devices$$: Subscription;
@@ -27,7 +30,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   chartColumns: string[] = [];
   chartOptions = {
     legend: { position: "bottom" },
-    chartArea: { width: "100%", height: "80%" },
+    chartArea: { width: "90%", height: "80%" },
   };
   chartData = [];
 
@@ -40,6 +43,8 @@ export class MyviewerComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.view = this.route.snapshot.data["view"];
+    // Set the viewType, initially, to the view's  view type.
+    this.viewType = this.view.viewType;
     this.aid = this.route.snapshot.paramMap.get("aid");
     // Load up the devices array  devices associated with the application
     // Used for resolving device names
@@ -47,8 +52,17 @@ export class MyviewerComponent implements OnInit, OnDestroy {
       ds.forEach((d) => this.devices.push({ id: d.id, name: d.name }));
     });
 
-    this.chartProcessor(20, this.view, this.aid);
+    this.chartProcessor(this.view, this.aid);
   }
+
+  onOptionChange() {
+    this.chartProcessor(this.view, this.aid);
+  }
+
+  // onViewTypeChange(event) {
+  //   console.log("onViewTypeChange", event.value);
+  //   this.viewType = event.value;
+  // }
 
   /**
    * Retrieve events and display as a google chart
@@ -57,19 +71,27 @@ export class MyviewerComponent implements OnInit, OnDestroy {
    * @param aid The application id
    *
    */
-  async chartProcessor(maxRows: number, view: View, aid: string) {
+  async chartProcessor(view: View, aid: string) {
+    this.showChart = false;
     // Set the chart type - see https://www.tutorialspoint.com/angular_googlecharts/index.htm
-    switch (view.viewType) {
-      case ViewType.scatter:
+    switch (this.viewType) {
+      case ViewType.scatter: {
         this.chartType = "ScatterChart";
         break;
-      case ViewType.line:
+      }
+      case ViewType.line: {
         this.chartType = "LineChart";
         break;
-      case ViewType.table:
+      }
+      case ViewType.table: {
         this.chartType = "Table";
         break;
+      }
     }
+
+    this.devices = [];
+    this.chartData = [];
+    this.chartColumns = [];
 
     // Load the devices array  devices associated with the application
     this.devices$$ = await this.deviceService
@@ -84,7 +106,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
     this.events$ = this.eventService.findByApplicationSensor(
       this.helper.docRef(`applications/${aid}`),
       view.sensorRef,
-      maxRows
+      this.maxRows
     );
 
     // Build google chart data
