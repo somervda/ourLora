@@ -48,30 +48,22 @@ export class MyviewerComponent implements OnInit, OnDestroy {
     this.aid = this.route.snapshot.paramMap.get("aid");
     // Load up the devices array  devices associated with the application
     // Used for resolving device names
-    this.devices$$ = await this.deviceService.findAll(100).subscribe((ds) => {
-      ds.forEach((d) => this.devices.push({ id: d.id, name: d.name }));
+    this.devices$$ = await this.deviceService.findAll(100).subscribe((devices) => {
+      devices.forEach((device) => this.devices.push({ id: device.id, name: device.name }));
     });
 
-    this.chartProcessor(this.view, this.aid);
+    this.chartProcessor();
   }
 
   onOptionChange() {
-    this.chartProcessor(this.view, this.aid);
+    this.chartProcessor();
   }
-
-  // onViewTypeChange(event) {
-  //   console.log("onViewTypeChange", event.value);
-  //   this.viewType = event.value;
-  // }
 
   /**
    * Retrieve events and display as a google chart
-   * @param maxRows Maximum number of maxRows of events to retrieve
-   * @param view The view to display
-   * @param aid The application id
    *
    */
-  async chartProcessor(view: View, aid: string) {
+  async chartProcessor() {
     this.showChart = false;
     // Set the chart type - see https://www.tutorialspoint.com/angular_googlecharts/index.htm
     switch (this.viewType) {
@@ -104,8 +96,8 @@ export class MyviewerComponent implements OnInit, OnDestroy {
 
     // Get an observable of the event data for the chart
     this.events$ = this.eventService.findByApplicationSensor(
-      this.helper.docRef(`applications/${aid}`),
-      view.sensorRef,
+      this.helper.docRef(`applications/${this.aid}`),
+      this.view.sensorRef,
       this.maxRows
     );
 
@@ -115,7 +107,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
 
     this.events$$ = await this.events$.subscribe(async (events) => {
       await events.map(async (event) => {
-        const deviceName = this.devices.find((d) => d.id == event.deviceRef.id)
+        const deviceName = this.devices.find((device) => device.id == event.deviceRef.id)
           ?.name;
         if (!series.includes(deviceName)) {
           series.push(deviceName);
