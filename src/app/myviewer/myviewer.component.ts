@@ -30,7 +30,7 @@ export class MyviewerComponent implements OnInit, OnDestroy {
   chartColumns: string[] = [];
   chartOptions = {
     legend: { position: "bottom" },
-    chartArea: { width: "90%", height: "80%" },
+    chartArea: { width: "90%", height: "70%" },
   };
   chartData = [];
 

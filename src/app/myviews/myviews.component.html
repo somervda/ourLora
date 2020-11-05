@@ -1,10 +1,10 @@
 <app-subheading prompt="My Views" matIcon="table_chart"></app-subheading>
-<div class="page-container">
+<div class="page-container" style="min-width: 380px">
   <ng-container *ngFor="let appViewItem of appViewTree">
     <div class="application" *ngIf="!appViewItem.viewId">
       {{ appViewItem.appName }}
     </div>
-    <div class="view" *ngIf="appViewItem.viewId">
+    <div class="view" *ngIf="appViewItem.viewId" class="hangingindent">
       <a
         [routerLink]="
           '/application/' +
@@ -15,7 +15,7 @@
         matTooltip="Click to go to view"
         >{{ appViewItem.viewName }}</a
       >
-      {{ appViewItem.viewDescription }}
+      {{ appViewItem.viewDescription | truncate: 100 }}
     </div>
   </ng-container>
 </div>

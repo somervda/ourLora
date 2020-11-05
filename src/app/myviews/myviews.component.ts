@@ -57,13 +57,20 @@ export class MyviewsComponent implements OnInit, OnDestroy {
               });
             }
             views.map((view) => {
-              this.appViewTree.push({
-                appId: application.id,
-                appName: application.name,
-                viewId: view.id,
-                viewName: view.name,
-                viewDescription: view.description,
-              });
+              // Only push view info that isn't in the appViewTree
+              if (
+                !this.appViewTree.find(
+                  (at) => at.appId == application.id && at.viewId == view.id
+                )
+              ) {
+                this.appViewTree.push({
+                  appId: application.id,
+                  appName: application.name,
+                  viewId: view.id,
+                  viewName: view.name,
+                  viewDescription: view.description,
+                });
+              }
             });
           });
       });
