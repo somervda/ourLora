@@ -13,4 +13,5 @@ export interface Event {
   value: number;
   iotDataSource: IotDataSource;
   name: string;
+  deviceName: string;
 }

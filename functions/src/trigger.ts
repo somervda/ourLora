@@ -4,6 +4,7 @@ import { Application } from "./models/application.model";
 import { Trigger, TriggerAction } from "./models/trigger.model";
 import { Triggerlog } from "./models/triggerlog.model";
 import { User } from "./models/user.model";
+import { UOMInfo } from "./models/sensor.model";
 import * as admin from "firebase-admin";
 import * as twilio from "twilio";
 import * as functions from "firebase-functions";
@@ -126,7 +127,7 @@ function sendNotification(trigger: Trigger, event: Event, user: User) {
   if (user.deviceMessagingToken) {
     const payload = {
       notification: {
-        title: trigger.name,
+        title: trigger.name + " for " + event.deviceName,
         body: trigger.message,
       },
     };
@@ -161,7 +162,7 @@ function sendSMS(trigger: Trigger, event: Event, user: User) {
     });
     twilioClient.messages
       .create({
-        body: trigger.message,
+        body: trigger.message + " " + event.deviceName,
         from: twilioPhone,
         to: user.smsPhoneE164,
       })
@@ -196,11 +197,17 @@ function sendEmail(trigger: Trigger, event: Event, user: User) {
     user.email
   );
 
+  const uomInfoItem = UOMInfo.find((uom) => event.uom === uom.uom);
+  const html =
+    `${trigger.message}<br/><br/>` +
+    `<b>Device</b> ${event.deviceName}<br/>` +
+    `<b>Value</b> ${event.value} ${uomInfoItem?.nameShort}`;
+
   const mailOptions = {
     from: "ourLora <olupincorp@gmail.com>",
     to: user.email,
     subject: trigger.name, // email subject
-    html: `<p style="font-size: 16px;">${trigger.message}</p>`, // email content in HTML
+    html: html, // email content in HTML
   };
 
   // Do the send

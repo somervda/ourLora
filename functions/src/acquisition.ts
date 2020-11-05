@@ -13,7 +13,7 @@ import { eventTrigger } from "./trigger";
  * by the ourLora system.
  * Testing with curl:
  * curl -d '{"payload_fields" : {"dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
- * curl -d '{"payload_fields" : {"dev_id": "curlTest02", "TEMPERATURE": 50}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
+ * curl -d '{"payload_fields" : {"dev_id": "curlTest02", "TEMPERATURE": 60}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
  */
 export const mailbox = functions.https.onRequest(async (request, response) => {
   console.log("**** Start **** Headers: ", JSON.stringify(request.headers));
@@ -309,6 +309,7 @@ async function writeEvent(
           .doc(sensor.id),
         applicationRefs: applicationRefs,
         iotDataSource: iotDataSource,
+        deviceName: device.name,
       };
       console.log("Event to write", JSON.stringify(event));
       const { id } = await db.collection("events").add(event);
