@@ -14,8 +14,8 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
-        "source": "/mailbox",
-        "function": "mailbox"
+        "source": "/iotBroker",
+        "function": "iotBroker"
       },
       {
         "source": "**",

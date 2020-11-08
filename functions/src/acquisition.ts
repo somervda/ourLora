@@ -10,107 +10,115 @@ import { eventTrigger } from "./trigger";
 
 /**
  * The https function accepting IOT data from the various IOT middleware systems supported
- * by the ourLora system.
+ * by the ourLora system. (Update user/password before using these)
  * Testing with curl:
- * curl -d '{"payload_fields" : {"dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
- * curl -d '{"payload_fields" : {"dev_id": "curlTest02", "TEMPERATURE": 60}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/mailbox
+ * curl -d '{"payload_fields" : {"dev_id": "curlTest01", "TEMPERATURE": 99}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/iotBroker
+ * curl -d '{"payload_fields" : {"dev_id": "curlTest02", "TEMPERATURE": 66}}' -H 'Content-Type: application/json' --user ourLora:password https://ourLora.com/iotBroker
  */
-export const mailbox = functions.https.onRequest(async (request, response) => {
-  console.log("**** Start **** Headers: ", JSON.stringify(request.headers));
-  console.log("Body: ", JSON.stringify(request.body));
+export const iotBroker = functions.https.onRequest(
+  async (request, response) => {
+    console.log("**** Start **** Headers: ", JSON.stringify(request.headers));
+    console.log("Body: ", JSON.stringify(request.body));
 
-  if (request.headers.authorization !== "Basic b3VyTG9yYTpwYXNzd29yZA==") {
-    console.log("401 Unauthorized:", request.headers.authorization);
-    response.status(401).send("Unauthorized");
-    //  Exit if authentication information is missing or invalid
-    return;
-  }
-
-  if (request.headers["content-type"] !== "application/json") {
-    console.log("Invalid content type: ", request.headers["content-type"]);
-    response.status(412).send("Precondition Failed, invalid content-type");
-    // Exit is invalid content-type
-    return;
-  }
-
-  if (!request.headers["user-agent"]) {
-    console.log("Missing user agent:");
-    response.status(412).send("Precondition Failed, missing user-agent");
-    // Exit if missing user-agent
-    return;
-  }
-
-  const userAgentSplitSlash = request.headers["user-agent"]?.split("/", 1);
-  let userAgent = undefined;
-  if (userAgentSplitSlash) {
-    userAgent = userAgentSplitSlash[0].split(" ", 1);
-  }
-  if (userAgent) {
-    let deviceId = undefined;
-    let iotDataSource: IotDataSource;
-    switch (userAgent[0].toUpperCase()) {
-      case "SIGFOX": {
-        iotDataSource = IotDataSource.SigFox;
-        deviceId = request.body.payload_fields.deviceId;
-        // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
-        break;
-      }
-      case "HTTP-TTN": {
-        //statements;
-        iotDataSource = IotDataSource.TheThingsNetwork;
-        deviceId = request.body.dev_id;
-        break;
-      }
-      case "CURL": {
-        iotDataSource = IotDataSource.curl;
-        //statements;
-        deviceId = request.body.payload_fields["dev_id"];
-        break;
-      }
-      case "LTE": {
-        iotDataSource = IotDataSource.Direct;
-        //statements;
-        deviceId = request.body["device_id"];
-        break;
-      }
-      case "HOLOGRAMCLOUD": {
-        iotDataSource = IotDataSource.Hologram;
-        //statements;
-        deviceId = request.body["deviceId"];
-        break;
-      }
-      default: {
-        //statements;
-        console.log(
-          "Invalid user agent:",
-          request.headers["user-agent"],
-          " userAgent[0]:",
-          userAgent[0]
-        );
-        response.status(412).send("Precondition Failed, invalid user agent");
-        return;
-      }
+    // Authentication header is stored as a firebase function config setting
+    // i.e. firebase functions:config:set iotauthentication.header="Basic b3VyTG9yYTpwYXNzd29yZA=="
+    // Change the authentication header value for your own implementation
+    if (
+      request.headers.authorization !==
+      functions.config().iotauthentication.header
+    ) {
+      console.log("401 Unauthorized:", request.headers.authorization);
+      response.status(401).send("Unauthorized");
+      //  Exit if authentication information is missing or invalid
+      return;
     }
-    if (deviceId) {
-      console.log("From " + iotDataSource + " deviceId:" + deviceId);
-      const eventResult = await prepareAndWriteEvent(
-        deviceId,
-        iotDataSource,
-        request.body
-      )
-        .then()
-        .catch();
-      response
-        .status(eventResult)
-        .send("Hello " + iotDataSource + " - " + deviceId);
+
+    if (request.headers["content-type"] !== "application/json") {
+      console.log("Invalid content type: ", request.headers["content-type"]);
+      response.status(412).send("Precondition Failed, invalid content-type");
+      // Exit is invalid content-type
+      return;
     }
-    return;
-  } else {
-    console.log("Missing user agent:");
-    response.status(412).send("Precondition Failed");
-    return;
+
+    if (!request.headers["user-agent"]) {
+      console.log("Missing user agent:");
+      response.status(412).send("Precondition Failed, missing user-agent");
+      // Exit if missing user-agent
+      return;
+    }
+
+    const userAgentSplitSlash = request.headers["user-agent"]?.split("/", 1);
+    let userAgent = undefined;
+    if (userAgentSplitSlash) {
+      userAgent = userAgentSplitSlash[0].split(" ", 1);
+    }
+    if (userAgent) {
+      let deviceId = undefined;
+      let iotDataSource: IotDataSource;
+      switch (userAgent[0].toUpperCase()) {
+        case "SIGFOX": {
+          iotDataSource = IotDataSource.SigFox;
+          deviceId = request.body.payload_fields.deviceId;
+          // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
+          break;
+        }
+        case "HTTP-TTN": {
+          //statements;
+          iotDataSource = IotDataSource.TheThingsNetwork;
+          deviceId = request.body.dev_id;
+          break;
+        }
+        case "CURL": {
+          iotDataSource = IotDataSource.curl;
+          //statements;
+          deviceId = request.body.payload_fields["dev_id"];
+          break;
+        }
+        case "LTE": {
+          iotDataSource = IotDataSource.Direct;
+          //statements;
+          deviceId = request.body["device_id"];
+          break;
+        }
+        case "HOLOGRAMCLOUD": {
+          iotDataSource = IotDataSource.Hologram;
+          //statements;
+          deviceId = request.body["deviceId"];
+          break;
+        }
+        default: {
+          //statements;
+          console.log(
+            "Invalid user agent:",
+            request.headers["user-agent"],
+            " userAgent[0]:",
+            userAgent[0]
+          );
+          response.status(412).send("Precondition Failed, invalid user agent");
+          return;
+        }
+      }
+      if (deviceId) {
+        console.log("From " + iotDataSource + " deviceId:" + deviceId);
+        const eventResult = await prepareAndWriteEvent(
+          deviceId,
+          iotDataSource,
+          request.body
+        )
+          .then()
+          .catch();
+        response
+          .status(eventResult)
+          .send("Hello " + iotDataSource + " - " + deviceId);
+      }
+      return;
+    } else {
+      console.log("Missing user agent:");
+      response.status(412).send("Precondition Failed");
+      return;
+    }
   }
-});
+);
 
 /**
  * Looks up the device, devicetype and sensors documents associated with the IOT data
