@@ -1,6 +1,6 @@
 # ourLora
 
-This project aims to provide a starting point for angular applications. Intent is for designer of a new application to take a copy of this project, perform a set of standard replace operations to rename the project to the required new name and then start adding application specific code. The ourLora application provides the following capabilities that can be extended by the application designer. See application at https://ourLora.firebaseapp.com/
+This project aims to provide a starting point for IOT applications. Intent is for designer of a new IOT application to take a copy of this project, perform a set of standard replace operations to rename the project to the required new name and then start adding application specific code. The ourLora application provides the following capabilities that can be extended by the application designer. See application at https://ourLora.firebaseapp.com/
 
 **ourLora Capabilities**
 
@@ -8,10 +8,12 @@ This project aims to provide a starting point for angular applications. Intent i
 - Firebase - ourLora includes firestore, authentication, hosting, firestore rules and firebase functions
 - Material Design - implements material design interface using @angular/material library. Custom material theme included to use as an example of extending base material design themes (Using SCSS and angular CDK features)
 - Authentication - Set up to use firebase authentication and firebaseui library to provide the authentication UI elements. Authentication is enterprise oriented, examples are provided of using google, email and microsoft as authentication providers. The microsoft provider should allow enterprises to use office365 accounts (as long as account access is allowed.) Some basic authorization capabilities are included (administrator role and functions). Route Guards are set up to restrict access (CacActivate) to components/functions based on users privileges (isActivated, isAdmin)
-- Home page with carousel - Example of a home splash page as a launching point for new users. Uses bootstrap carousel component and material cards in a fairly typical home page layout (main features as images and detail cards)
+- Home page - Example of a home splash page as a launching point for new users.
 - PWA - Progressive web application, includes a service worker, desktop images, starter page etc that is required for a well behaved PWA. Caching defined for application and data to support offline operation.
 - E2E test suite - Cypress test suite included to test ourLora capabilities and can be extended for applications based on ourLora (See section below for more details on e2e functionality)
 - Built/tested/optimized - Base ourLora capabilities are built in, tested, and optimized to ensure new applications start at a consistent and well architected starting point.
+- IOT data acquisition interface for collecting data from The Things Network (LoraWan), Sigfox, Hologram LTE as well as https.
+- Management of IOT devices, devicetypes, applications, triggers and data views.
 
 ## Creating a new new project based on ourLora
 
