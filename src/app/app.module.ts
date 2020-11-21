@@ -29,7 +29,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ServiceWorkerModule } from "@angular/service-worker";
-import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
 import { environment } from "../environments/environment";
 import { AboutComponent } from "./about/about.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -129,7 +128,6 @@ import { GoogleChartsModule } from "angular-google-charts";
     // MatMomentDateModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    NgbCarouselModule,
     GoogleChartsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirePerformanceModule,
