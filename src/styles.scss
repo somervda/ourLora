@@ -24,7 +24,6 @@ $theme: mat-light-theme($primary, $accent);
 body {
   background-color: lightgray;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  font-size: 14px;
 }
 
 .page-container {
@@ -47,4 +46,8 @@ body {
 
 .prompt {
   font-weight: 600;
+}
+
+fieldset {
+  border-style: none;
 }
