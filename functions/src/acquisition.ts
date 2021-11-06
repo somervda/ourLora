@@ -52,6 +52,7 @@ export const iotBroker = functions.https.onRequest(
     if (userAgentSplitSlash) {
       userAgent = userAgentSplitSlash[0].split(" ", 1);
     }
+    let deviceData = request.body;
     if (userAgent) {
       let deviceId = undefined;
       let iotDataSource: IotDataSource;
@@ -62,10 +63,12 @@ export const iotBroker = functions.https.onRequest(
           // SIG fox, you must add the "deviceId : {device}"  property to the to the payload_fields json
           break;
         }
-        case "HTTP-TTN": {
+        case "THETHINGSSTACK": {
           //statements;
           iotDataSource = IotDataSource.TheThingsNetwork;
-          deviceId = request.body.dev_id;
+          deviceId = request.body.end_device_ids.device_id;
+          // For the things stack the only interesting data is in the decoded_payload property
+          deviceData = request.body.uplink_message.decoded_payload
           break;
         }
         case "CURL": {
@@ -103,7 +106,7 @@ export const iotBroker = functions.https.onRequest(
         const eventResult = await prepareAndWriteEvent(
           deviceId,
           iotDataSource,
-          request.body
+          deviceData
         )
           .then()
           .catch();
@@ -134,7 +137,7 @@ async function prepareAndWriteEvent(
   // Doing all this stuff synchronously because asynchronous is hurting my brain
   // Assign all events for a particular acquisition operation the same timestamp;
   const timestamp = new Date();
-  // console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
+  console.log("prepareAndWriteEvent:", deviceId, JSON.stringify(requestBody));
 
   // Look up device, devicetype and sensors
   const devicesCollectionRef = <FirebaseFirestore.CollectionReference>(
@@ -220,7 +223,7 @@ async function prepareAndWriteEvent(
         };
         return sensor;
       });
-      // console.log("sensors: ", JSON.stringify(sensors));
+      console.log("sensors: ", JSON.stringify(sensors));
 
       //  **********************************************
       // We have all the information needed to create an event document
@@ -260,12 +263,19 @@ async function writeEvent(
 ) {
   // Match up the sensor definition with the data in the requestBody data, and write an event
   // for each matching sensor
+  console.log("writeevent:",JSON.stringify(requestBody)," - ",iotDataSource);
   sensors.forEach(async (sensor) => {
     if (getBodyField(requestBody, sensor.acquisitionMapValue)) {
       // Value property exists for the sensor, we can write an event
-      // console.log("Sensor found:", sensor.name);
-      const value = getBodyField(requestBody, sensor.acquisitionMapValue);
-
+      console.log("Sensor found:", sensor.name);
+      var value = 0
+      if (iotDataSource == IotDataSource.TheThingsNetwork) {
+        value = requestBody[sensor.acquisitionMapValue]
+      }
+      else {
+        value = getBodyField(requestBody, sensor.acquisitionMapValue);
+      }
+      console.log("Sensor value:", value);
       // if device has gps sensor and lat/lng is available use those
       // values rather than the device default location
       let latitude = device.latitude;
