@@ -30,10 +30,14 @@
 // *******************************************************************************
 
 Cypress.Commands.add("verifyAboutComponent", () => {
+  cy.wait(1000);
   cy.get("#mainMenu").click();
+  cy.wait(1000);
+  // cy.get('#mainMenuAbout');
   cy.get("#mainMenuAbout").click();
   // Verify component was rendered
-  cy.url().should("include", "about");
+  cy.wait(1000);
+  // cy.url().should("include", "about");
   cy.get(".mat-card-title").contains("About");
 });
 
@@ -41,7 +45,7 @@ Cypress.Commands.add("verifyHomeComponent", () => {
   cy.get("#mainMenu").click();
   cy.get("#mainMenuHome").click();
   // Verify component was rendered
-  cy.get(".mat-card-title").contains("Code");
+  cy.get(".mat-card-title").contains("ourLora");
 });
 
 Cypress.Commands.add("verifyMyProfileComponent", () => {
@@ -55,7 +59,8 @@ Cypress.Commands.add("verifyUsersComponent", () => {
   cy.get("#mainMenu").click();
   cy.get("#mainMenuUsers").click();
   cy.get("body").contains("Users");
-  cy.get("body").contains("normal@ourLora.com").click();
+  cy.wait(1000);
+  cy.get("body").contains("normal@ourlora.com").click();
   cy.url().should("include", "user/");
   cy.get("body").contains("User Profile");
 });

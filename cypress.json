@@ -2,9 +2,9 @@
   "baseUrl": "http://localhost:4200/",
   "env": {
     "nonAdminUser": "normal@ourLora.com",
-    "nonAdminUserPassword": "password",
+    "nonAdminUserPassword": "passwordnpm",
     "adminUser": "admin@ourLora.com",
-    "adminUserPassword": "password"
+    "adminUserPassword": "passwordng"
   },
   "requestTimeout": 10000,
   "defaultCommandTimeout": 8000
